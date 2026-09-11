@@ -141,6 +141,7 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   <h1 style="margin-top:10px">Куда пойти учиться</h1>
   <p class="lede">Двенадцать вопросов о том, что интересно и что терпимо. На выходе — какие
   предметы имеет смысл сдавать и на какие бюджетные программы с этим набором реально попасть.</p>
+  <div class="tog" id="mode" style="margin-top:18px"></div>
   <div class="bar" id="bar"></div>
 </header>
 <main id="app"></main>
@@ -260,6 +261,15 @@ function spoGrade(p) {
   return [1, "ни балла, ни конкурса не публикуют"];
 }
 
+// балл аттестата, с которым проходишь не последним: проходной плюс запас по конкурсу
+function spoSure(p) {
+  if (p.a == null) return null;
+  const q = p.q == null ? 2 : p.q;
+  const add = q < 1 ? 0.1 : (q < 2 ? 0.3 : (q < 4 ? 0.4 : 0.55));
+  return Math.min(5, Math.round((p.a + add) * 100) / 100);
+}
+const fb = v => v == null ? "—" : v.toFixed(2).replace(".", ",");
+
 function spoPick(sc) {
   const w = p => spoTags(p).reduce((s, t) => s + (sc[t] || 0), 0);
   return SPO.filter(p => p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
@@ -269,14 +279,20 @@ function spoPick(sc) {
 
 function spoTable(rows) {
   return `<div class="scroll"><table>
-    <colgroup><col><col class="w1"><col class="w1"><col class="w2"><col class="w4"></colgroup><tr>
+    <colgroup><col><col class="w1"><col class="w1"><col class="w2"><col class="w2"><col class="w4"></colgroup><tr>
     <th>Специальность</th><th class="r">База</th><th class="r">Мест</th>
-    <th class="r">Заявок<br>на место</th><th class="r">Как берут</th></tr>` +
-    rows.map(p => `<tr><td class="nm"><b>${esc(p.n)}</b><span>${esc(KOL[p.k].full)} · ${esc(p.c)}${
+    <th class="r">Заявок<br>на место</th><th class="r">Аттестат:<br>проходной</th>
+    <th class="r">Уверенно</th></tr>` +
+    rows.map(p => {
+      const sure = spoSure(p);
+      return `<tr><td class="nm"><b>${esc(p.n)}</b><span>${esc(KOL[p.k].full)} · ${esc(p.c)}${
       p.t && p.t !== "нет данных" ? " · <span style='white-space:nowrap'>" + esc(p.t) + "</span>" : ""}</span></td>
       <td class="r">${p.b} кл.</td><td class="r">${p.p == null ? "—" : p.p}</td>
       <td class="r">${p.q == null ? "—" : (p.q < 1 ? "недобор" : fq(p.q))}</td>
-      <td class="r"><span class="tag t${p.g[0]}">${p.g[1]}</span></td></tr>`).join("") +
+      <td class="r">${fb(p.a)}</td>
+      <td class="r"><b style="color:var(--ink)">${sure == null
+        ? (p.q != null && p.q < 1 ? "любой" : "н/д")
+        : fb(sure)}</b></td></tr>`; }).join("") +
     `</table></div>`;
 }
 
@@ -397,8 +413,19 @@ function setCard(v, main) {
 
 function render() {
   const bar = document.getElementById("bar"), app = document.getElementById("app");
+  const mode = document.getElementById("mode");
+  mode.innerHTML =
+    `<button id="mQ" class="${manual ? "" : "on"}">Пройти тест</button>` +
+    `<button id="mM" class="${manual ? "on" : ""}">Выбрать предметы</button>`;
+  mode.querySelector("#mQ").onclick = () => { manual = null; render(); };
+  mode.querySelector("#mM").onclick = () => {
+    if (!manual) manual = new Set(step >= Q.length ? variants()[0].nab : ["математика", "физика"]);
+    render(); };
+  bar.hidden = !!manual;
   bar.innerHTML = Q.map((_, i) =>
     `<i class="${i < step ? "on" : ""}${i === step ? " now" : ""}"></i>`).join("");
+
+  if (manual) { renderManual(app); return; }
 
   if (step < Q.length) {
     const q = Q[step];
@@ -413,13 +440,9 @@ function render() {
         <button class="btn" id="next"${ans[step] == null ? " disabled" : ""}>
           ${step === Q.length - 1 ? "Показать результат" : "Дальше"}</button>
       </div>
-      <p style="margin-top:16px;text-align:center">
-        <button class="skip" id="skip">Уже знаю, какие предметы сдаю — показать программы</button>
-      </p></section>`;
+      </div></section>`;
     app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
       ans[step] = +b.dataset.i; save(); render(); });
-    const sk = document.getElementById("skip");
-    if (sk) sk.onclick = () => { manual = new Set(["математика", "физика"]); render(); };
     document.getElementById("back").onclick = () => { step--; save(); render(); };
     document.getElementById("next").onclick = () => { step++; save(); render(); };
     return;
@@ -526,18 +549,32 @@ function render() {
       бакалавриат → магистратура.</p>
     </div>`;
 
-  if (manual) {
+
+  app.innerHTML = `<div class="res">
+    <div class="tog" style="align-self:flex-start">
+      <button id="tE" class="${tab === "ege" ? "on" : ""}">Вуз по ЕГЭ</button>
+      <button id="tS" class="${tab === "spo" ? "on" : ""}">Колледж без ЕГЭ</button>
+    </div>
+    ${tab === "ege" ? egeBlock : spoBlock}
+    <div><button class="btn g" id="again">Пройти заново</button></div>
+  </div>`;
+
+  document.getElementById("tE").onclick = () => { tab = "ege"; render(); };
+  document.getElementById("tS").onclick = () => { tab = "spo"; render(); };
+  const f = a => { showAll = a; render(); };
+  const b0 = document.getElementById("f0"), b1 = document.getElementById("f1");
+  if (b0) b0.onclick = () => f(false);
+  if (b1) b1.onclick = () => f(true);
+  document.getElementById("again").onclick = () => { ans = []; step = 0; showAll = false; tab = "ege"; save(); render(); };
+}
+
+function renderManual(app) {
     const nab = [...manual];
     const ok = nab.length ? pick(nab) : [];
     const real = ok.filter(p => grade(p)[0] === 0);
     const places = ok.reduce((s, p) => s + (p.o == null ? p.p : p.o), 0);
     const hours = nab.reduce((s, k) => s + (COST[k] || 0), 0);
     app.innerHTML = `<div class="res">
-      <div class="tog" style="align-self:flex-start">
-        <button id="tE" class="">Вуз по ЕГЭ</button>
-        <button id="tS" class="">Колледж без ЕГЭ</button>
-        <button id="tM" class="on">Выбрать предметы</button>
-      </div>
       <div>
         <div class="kick">Полный список</div>
         <h2 style="margin-top:8px">Что сдаю — туда и смотрю</h2>
@@ -558,15 +595,16 @@ function render() {
       </section>
       ${nab.length && ok.length ? `<section class="set">
         <div class="kick">Все ${ok.length} программ по возрастанию проходного</div>
+        <p style="font-size:13.5px;color:var(--faint);margin:8px 0 0">
+          «Проходной» — балл последнего зачисленного. «Уверенно» — балл середины списка:
+          с ним проходишь не впритык, а с запасом. Рядом — сколько это за каждый экзамен.</p>
         ${table({ok}, true)}
       </section>` : (nab.length ? `<div class="why"><h3>С таким набором бюджетных программ нет</h3>
         <p>Ни одно направление в одиннадцати вузах Волгограда и Волжского не принимает
         этот набор предметов. Добавьте профильную математику или обществознание —
         они открывают больше всего.</p></div>` : "")}
-      <div><button class="btn g" id="again">Пройти тест заново</button></div>
+      <div><button class="btn g" id="again">Пройти тест с начала</button></div>
     </div>`;
-    document.getElementById("tE").onclick = () => { manual = null; tab = "ege"; render(); };
-    document.getElementById("tS").onclick = () => { manual = null; tab = "spo"; render(); };
     app.querySelectorAll(".pk").forEach(b => b.onclick = () => {
       const k = b.dataset.k;
       manual.has(k) ? manual.delete(k) : manual.add(k);
@@ -574,28 +612,8 @@ function render() {
     });
     document.getElementById("again").onclick = () => {
       ans = []; step = 0; showAll = false; tab = "ege"; manual = null; save(); render(); };
-    return;
-  }
-
-  app.innerHTML = `<div class="res">
-    <div class="tog" style="align-self:flex-start">
-      <button id="tE" class="${tab === "ege" ? "on" : ""}">Вуз по ЕГЭ</button>
-      <button id="tS" class="${tab === "spo" ? "on" : ""}">Колледж без ЕГЭ</button>
-      <button id="tM">Выбрать предметы</button>
-    </div>
-    ${tab === "ege" ? egeBlock : spoBlock}
-    <div><button class="btn g" id="again">Пройти заново</button></div>
-  </div>`;
-
-  document.getElementById("tE").onclick = () => { tab = "ege"; render(); };
-  document.getElementById("tS").onclick = () => { tab = "spo"; render(); };
-  document.getElementById("tM").onclick = () => { manual = new Set(best.nab); render(); };
-  const f = a => { showAll = a; render(); };
-  const b0 = document.getElementById("f0"), b1 = document.getElementById("f1");
-  if (b0) b0.onclick = () => f(false);
-  if (b1) b1.onclick = () => f(true);
-  document.getElementById("again").onclick = () => { ans = []; step = 0; showAll = false; tab = "ege"; save(); render(); };
 }
+
 render();
 
 </script>
