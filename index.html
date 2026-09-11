@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Тест: какие предметы ЕГЭ сдавать и куда реально поступить на бюджет в Волгограде и Волжском. 184 программы вузов и 267 специальностей колледжей.">
+<meta name="description" content="Тест: какие предметы ЕГЭ сдавать и куда реально поступить на бюджет в Волгограде и Волжском.">
 <meta name="color-scheme" content="light dark">
 <title>Куда пойти учиться</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,500;0,700;1,500&family=PT+Sans:wght@400;700&display=swap">
@@ -291,18 +291,25 @@ const fits = (p, nab) => {
   if (p.ch.length && !p.ch.some(x => set.has(x))) return false;
   return true;
 };
-const pick = nab => PROGS.filter(p => fits(p, nab))
-  .sort((a, b) => (a.s || 999) - (b.s || 999));
+const pick = nab => PROGS.filter(p => fits(p, nab) && p.o !== 0)
+  .sort((a, b) => (pass(a)[0] || 999) - (pass(b)[0] || 999));
 
 // оценка реальности: проходной + сколько мест остаётся в общем конкурсе
+// проходной: минимум зачисленного 2026, где списки открыты; иначе приказ 2025
+function pass(p) {
+  const f = FACTV.has(p.v) ? FACT[p.code] : null;
+  return f ? [f.min, 2026] : [p.s, 2025];
+}
+
 function grade(p) {
   const open = p.o == null ? p.p : p.o;
+  const s = pass(p)[0];
   if (p.o === 0) return [2, "общего конкурса нет"];
-  if (p.s == null) return [1, "балл не публиковали"];
-  if (p.s <= 159 && open >= 15) return [0, "реально"];
-  if (p.s <= 159) return [1, "мест мало"];
-  if (p.s <= 175) return [1, "впритык"];
-  if (p.s <= 200) return [2, "трудно"];
+  if (s == null) return [1, "балл не публиковали"];
+  if (s <= 159 && open >= 15) return [0, "реально"];
+  if (s <= 159) return [1, "мест мало"];
+  if (s <= 175) return [1, "впритык"];
+  if (s <= 200) return [2, "трудно"];
   return [2, "очень трудно"];
 }
 
@@ -339,21 +346,25 @@ function table(v) {
   const rows = showAll ? v.ok.slice(0, 40) : v.ok.filter(p => grade(p)[0] < 2).slice(0, 14);
   if (!rows.length) return "<p style='margin-top:14px;color:var(--faint)'>С этим набором доступных программ не нашлось.</p>";
   return `<div class="scroll"><table>
-    <colgroup><col><col class="w3"><col class="w2"><col class="w1"><col class="w4"></colgroup><tr>
-    <th>Направление</th><th class="r">Проходной<br>2025</th>
-    <th class="r">Мест без<br>квот</th><th class="r">Всего<br>мест</th>
+    <colgroup><col><col class="w2"><col class="w2"><col class="w1"><col class="w2"><col class="w4"></colgroup><tr>
+    <th>Направление</th><th class="r">Проходной</th><th class="r">Уверенно</th>
+    <th class="r">За пред-<br>мет</th><th class="r">Мест без<br>квот</th>
     <th class="r">Оценка</th></tr>` +
     rows.map(p => { const [g, t] = grade(p);
       const k = KONK[p.v];
       const f = FACTV.has(p.v) ? FACT[p.code] : null;
+      const [ps, py] = pass(p);
+      const cb = f ? Math.round(f.med) : (p.s == null ? null : Math.round((p.s + 28) / 5) * 5);
       return `<tr><td class="nm"><b>${esc(p.n)}</b><span>${esc(p.v)} · ${esc(p.c)}${
         k ? " · конкурс по вузу " + String(k).replace(".", ",") : ""}</span>${
         f ? `<span style="color:var(--ink);margin-top:3px">Зачисление 2026: минимум ${f.min},
              медиана ${String(f.med).replace(".0","").replace(".", ",")}${
              f.low ? `, с баллом до 160 прошло ${f.low} из ${f.n}` : `, ниже 160 не прошёл никто`}</span>` : ""}</td>
-      <td class="r">${p.s == null ? "—" : p.s}</td>
-      <td class="r"><b style="color:var(--ink)">${p.o == null ? "н/д" : p.o}</b></td>
-      <td class="r" style="color:var(--faint)">${p.p}</td>
+      <td class="r">${ps == null ? "—" : ps}<span style="display:block;font-size:10px;color:var(--faint)">${py}</span></td>
+      <td class="r"><b style="color:var(--ink)">${cb == null ? "—" : cb}</b>${
+        f ? "" : `<span style="display:block;font-size:10px;color:var(--faint)">оценка</span>`}</td>
+      <td class="r" style="color:var(--faint)">${cb == null ? "—" : Math.round(cb / (p.k || 3))}</td>
+      <td class="r">${p.o == null ? "н/д" : p.o}<span style="display:block;font-size:10px;color:var(--faint)">из ${p.p}</span></td>
       <td class="r"><span class="tag t${g}">${t}</span></td></tr>`; }).join("") +
     `</table></div>`;
 }
@@ -437,6 +448,12 @@ function render() {
       <p><b>«Реально»</b> — проходной до 159 и не меньше пятнадцати мест без квот: это 45–53
       балла за каждый из трёх экзаменов. <b>«Впритык»</b> — до 175, около 58 за предмет.
       Порог всех трёх экзаменов вместе — 121 балл.</p>
+      <p><b>Проходной и уверенный балл.</b> Там, где вуз опубликовал списки (ВолгГТУ, ИАиС, ВПИ),
+      «проходной» — это реальный минимум зачисленного в 2026 году, а «уверенно» — медиана,
+      то есть балл середины списка. У остальных стоит приказ 2025 года и расчёт «проходной
+      плюс 28» с пометкой «оценка»: 28 — типичный разрыв между последним и средним
+      зачисленным там, где списки открыты. Программы, где все места ушли в квоты
+      и общего конкурса не было, из списка убраны.</p>
       <p><b>Кто на самом деле проходит с низким баллом.</b> В списках зачисления ВолгГТУ
       за 2026 год — 1440 человек, принятых на бюджет. С суммой до 150 баллов прошли
       30 человек, это 2 процента. До 160 — 77 человек, 5 процентов. Медиана 216.
