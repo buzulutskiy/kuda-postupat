@@ -162,8 +162,11 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .card .how{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);font-size:15px}
 .card .how b{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--faint);margin-bottom:5px}
-.card .ans{margin-top:10px;font-size:14px}
-.card .ans span{color:var(--ink);font-weight:700}
+.card .orig{margin-top:10px;font-size:13.5px;color:var(--faint);padding-left:12px;
+  border-left:2px solid var(--line)}
+.card .also{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);font-size:14px}
+.card .also b{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:5px}
 .ege-tbl{margin:14px 0;overflow-x:auto}
 .ege-tbl table{border-collapse:collapse;font-size:14.5px;min-width:min(100%,320px)}
 .ege-tbl th,.ege-tbl td{border:1px solid var(--line);padding:7px 12px;text-align:left}
@@ -199,24 +202,24 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 <header style="border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px">
   <div class="kick">Знакомство, а не тест</div>
   <h1 style="margin-top:10px">Посмотреть, как это решается</h1>
-  <p class="lede">По пять настоящих базовых заданий из каждого предмета — с разбором,
-  как они решаются. Никто ничего не проверяет и не ставит оценок. Задача одна:
-  полистать и почувствовать, что понятнее и что хочется разбирать дальше.</p>
+  <p class="lede">Настоящие задания из демонстрационных вариантов ЕГЭ 2027 года, дословно,
+  с разбором — как они решаются и что ещё может стоять за этим же номером в другом варианте.
+  Никто ничего не проверяет: полистайте и почувствуйте, что понятнее.</p>
   <div class="tabs" id="tabs"></div>
 </header>
 <main id="out"></main>
-<footer class="foot">Задания упрощены и переписаны своими словами по образцам открытого банка
-ФИПИ — это не настоящие варианты экзамена, а показ того, как выглядит работа.
-Русский язык не включён: его сдают все, выбирать тут нечего.</footer>
+<footer class="foot">Формулировки заданий приведены дословно по демонстрационным вариантам
+ЕГЭ 2027 года (проект), опубликованным ФИПИ. Рисунки, графики и таблицы из оригинала здесь
+не воспроизводятся — их можно посмотреть в самой демоверсии по ссылке в конце каждого раздела.
+© Федеральная служба по надзору в сфере образования и науки. Русский язык не включён:
+его сдают все, выбирать тут нечего.</footer>
 </div>
-<script src="demo.js?v=2"></script>
-<script src="demo_render.js?v=2"></script>
+<script src="demo.js?v=3"></script>
 <script>
 const NAMES = {"биология":"Биология","география":"География","физика":"Физика","химия":"Химия",
  "математика":"Математика","информатика":"Информатика","обществознание":"Обществознание",
  "история":"История","литература":"Литература","иностранный":"Иностранный"};
-const ORDER = ["география","биология","обществознание","история","химия","физика",
-               "математика","информатика","литература","иностранный"];
+const ORDER = ["география","биология","обществознание","химия","физика","математика"];
 let cur = "биология";
 try { const s = localStorage.getItem("demo-subj"); if (s && DEMO[s]) cur = s; } catch (e) {}
 
@@ -225,15 +228,24 @@ function render() {
     .map(k => `<button class="tb${k === cur ? " on" : ""}" data-k="${k}">${NAMES[k]}</button>`).join("");
   const list = DEMO[cur];
   document.getElementById("out").innerHTML =
-    list.map((d, i) => `<div class="card">
-      <div class="no"><span>Задание ${i + 1} из ${list.length} · ${NAMES[cur]}</span>
-      <span>${d.k}</span></div>
+    list.map(d => `<div class="card">
+      <div class="no"><span>Задание ${d.n} · ${NAMES[cur]}</span><span>${d.k}</span></div>
       <div class="q">${d.q}</div>
-      ${renderTask(d.v)}
+      <div class="orig">${d.orig}</div>
       <div class="ask">Что надо сделать: ${d.ask}</div>
       <div class="how"><b>Как это решается</b>${d.how}</div>
-      <div class="ans">Ответ: <span>${d.ans}</span></div>
+      <div class="also"><b>Но это только один пример</b>${d.also}</div>
     </div>`).join("") +
+    `<div class="sum" style="margin-bottom:18px">
+      <p><b>Почему «только один пример».</b> Вот что пишет сам ФИПИ в демоверсии:
+      «В демонстрационном варианте представлены конкретные примеры заданий,
+      не исчерпывающие всего многообразия возможных формулировок заданий на каждой позиции
+      варианта экзаменационной работы».</p>
+      <p>То есть за номером 1 в разных вариантах стоят разные задания — со своими темами
+      и формулами. Увидев одно, нельзя решить, что вся позиция такая.</p>
+      <p><a href="${FIPI}${DEMOFILE[cur] || ""}">Скачать демоверсию ${NAMES[cur].toLowerCase()} 2027 с сайта ФИПИ</a>
+      — там весь вариант целиком, с рисунками и критериями.</p>
+    </div>` +
     `<div class="sum">
       <p><b>Если почти всё показалось понятным</b> — предмет скорее подойдёт: базовые задания
       в экзамене примерно такого уровня, дальше идёт то же самое, но с вариациями.</p>
