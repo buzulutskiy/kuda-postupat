@@ -170,7 +170,11 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .under{margin-top:14px;display:grid;gap:10px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:9px;
   padding:15px 17px;margin:0;box-shadow:none}
-.card.must{border-left:3px solid var(--acc);padding-left:14px}
+.card.must{border-left:4px solid var(--acc);padding-left:13px;background:var(--acc-soft)}
+.chip.need{background:var(--acc);color:#fff;letter-spacing:.04em}
+:root[data-theme="dark"] .chip.need,:root:not([data-theme="light"]) .chip.need{color:#0f1410}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .chip.need{color:#fff}}
+.chip.skip{background:transparent;color:var(--faint);box-shadow:inset 0 0 0 1px var(--line)}
 .card .no{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
   font-weight:700;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .card .no .lft{padding-top:3px}
@@ -245,9 +249,10 @@ try { const s = localStorage.getItem("demo-subj"); if (s && PAGES[s]) cur = s; }
 function card(n, d) {
   return `<div class="card${d.m ? " must" : ""}">
     <div class="no">
-      <span class="lft">Задание ${n}${d.lv ? " · " + d.lv : ""} · ${d.p} ${d.p === 1 ? "балл" : d.p < 5 ? "балла" : "баллов"}${
-        d.m ? ` · <span class="mk">нужно для 60–70</span>` : ""}</span>
-      <span class="chips"><span class="chip kind">${d.k}</span><span class="chip ${DCLASS[d.d] || "t1"}">${d.d}</span></span>
+      <span class="lft">Задание ${n}${d.lv ? " · " + d.lv : ""} · ${d.p} ${d.p === 1 ? "балл" : d.p < 5 ? "балла" : "баллов"}</span>
+      <span class="chips">${d.m
+        ? `<span class="chip need">★ нужно для 60–70</span>`
+        : `<span class="chip skip">можно пропустить</span>`}<span class="chip kind">${d.k}</span><span class="chip ${DCLASS[d.d] || "t1"}">${d.d}</span></span>
     </div>
     <div class="th">${d.t}</div>
     <div class="lead">${d.q}</div>
