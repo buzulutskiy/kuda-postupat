@@ -66,6 +66,50 @@ function verdict(rows) {
                 `до конца мая: ${how}. Всего ${good.hours} часов подготовки с нуля.`};
 }
 
+// какие задания нужно закрыть на 60 тестовых
+function nabor60(t) {
+  if (!t.list) return null;
+  let got = 0; const keep = new Set();
+  for (const [n, , b, lvl] of t.list) {
+    if (n > t.part1 || got >= t.p60) continue;
+    if (lvl !== "Б" && got + b <= t.p60 - 2) continue;   // повышенные берём в последнюю очередь
+    keep.add(n); got += b;
+  }
+  for (const [n, , b] of t.list) {                        // добираем, если базовых не хватило
+    if (got >= t.p60 || n > t.part1 || keep.has(n)) continue;
+    keep.add(n); got += b;
+  }
+  return {keep, got};
+}
+
+function tasksBlock(nab) {
+  return ["русский", ...nab].map(k => {
+    const t = TASKS[k], i = SUBJ_INFO[k];
+    if (!t) return "";
+    const nb = nabor60(t);
+    const head = `<div class="hd"><h3>${i.n}</h3>
+      <span class="tag ${i.K <= 2.5 ? "t0" : (i.K <= 6 ? "t1" : "t2")}">${t.total} заданий</span></div>
+      <p class="plus">На 60 баллов нужно ${t.p60} первичных из ${t.pmax}${
+        nb ? `, это ${nb.keep.size} заданий из ${t.total}` : ""}. ${
+        t.p60 <= t.pb1
+          ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, задачи с развёрнутым решением можно не трогать.`
+          : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
+    const body = t.list
+      ? `<div class="tasks">${t.list.map(([n, name, b, lvl]) => {
+          const on = nb && nb.keep.has(n);
+          return `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
+            <span class="tn">${n}</span><span class="tt">${name}</span>
+            <span class="tl">${lvl === "Б" ? "базовый" : (lvl === "П" ? "повышенный" : "высокий")}</span>
+            <span class="tb">${b}</span>${on ? `<span class="tm">нужно</span>` : ""}</div>`;
+        }).join("")}</div>`
+      : `<div class="tasks">${t.blocks.map(([num, what, ball]) =>
+          `<div class="tk blk"><span class="tn">${num.replace("Задания ", "").replace("Задание ", "")}</span>
+           <span class="tt">${what}</span><span class="tb2">${ball}</span></div>`).join("")}</div>`;
+    return `<div class="sub-card">${head}${body}
+      <div class="meta">Источник структуры: ${t.src}</div></div>`;
+  }).join("");
+}
+
 function render() {
   const nab = [...sel];
   const ok = PROGS.filter(p => fits(p, nab)).sort((a, b) => passBall(a) - passBall(b));
@@ -122,6 +166,14 @@ function render() {
             до 50 баллов ≈ ${i.h50} ч работы</div>
         </div>`;
       }).join("")}
+    </section>
+
+    <section>
+      <h2>Объём: все задания экзамена</h2>
+      <p class="lede" style="font-size:15.5px">Что именно спрашивают и сколько заданий нужно закрыть
+      на 60 баллов. Отмеченные — минимальный набор: только первая часть, задачи с развёрнутым
+      решением в него не входят.</p>
+      ${tasksBlock(nab)}
     </section>
 
     <section>
