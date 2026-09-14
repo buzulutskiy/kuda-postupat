@@ -183,6 +183,8 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .card dd{margin:0;color:var(--body)}
 @media (max-width:520px){.card dl{grid-template-columns:1fr;gap:2px 0}
   .card dd{margin-bottom:8px}}
+.card.must{border-left:3px solid var(--acc)}
+.card .need{margin-top:8px;font-size:13px;color:var(--acc);font-weight:700}
 .src{font-size:12.5px;color:var(--faint);margin:0 0 26px}
 .nb{background:var(--sand);border-radius:9px;padding:14px 16px;font-size:14px;margin:0}
 .legend{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 24px}
@@ -208,21 +210,24 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 © Федеральная служба по надзору в сфере образования и науки. Разбор под страницами написан
 для этого сайта. Русский язык не включён: его сдают все, выбирать тут нечего.</footer>
 </div>
-<script src="zadaniya.js?v=1"></script>
+<script src="zadaniya.js?v=2"></script>
 <script>
-const NAMES = {"биология":"Биология","география":"География","физика":"Физика","химия":"Химия",
- "математика":"Математика","обществознание":"Обществознание"};
-const ORDER = ["география","биология","обществознание","химия","физика","математика"];
+const NAMES = {"география":"География","биология":"Биология","обществознание":"Обществознание",
+ "история":"История","русский":"Русский","литература":"Литература","английский":"Английский",
+ "химия":"Химия","физика":"Физика","информатика":"Информатика","математика":"Математика"};
+const ORDER = ["география","биология","обществознание","история","русский","литература",
+ "английский","химия","физика","информатика","математика"];
 const DCLASS = {"совсем просто":"t0","просто":"t0","надо выучить":"t1","средне":"t1",
  "тяжело":"t2","очень тяжело":"t2"};
 let cur = "география";
 try { const s = localStorage.getItem("demo-subj"); if (s && PAGES[s]) cur = s; } catch (e) {}
 
 function card(n, d) {
-  return `<div class="card">
-    <div class="no"><span>Задание ${n}</span>
+  return `<div class="card${d.m ? " must" : ""}">
+    <div class="no"><span>Задание ${n}${d.lv ? " · уровень " + d.lv : ""} · ${d.p} ${d.p === 1 ? "балл" : d.p < 5 ? "балла" : "баллов"}</span>
       <span class="tag ${DCLASS[d.d] || "t1"}">${d.d}</span></div>
     <div class="th">${d.t}</div>
+    ${d.m ? `<div class="need">Входит в набор на 60–70 баллов — это надо уметь</div>` : ""}
     <div class="how">${d.h}</div>
     <dl>
       <dt>Что знать</dt><dd>${d.z}</dd>
@@ -234,17 +239,20 @@ function card(n, d) {
 function render() {
   document.getElementById("tabs").innerHTML = ORDER
     .map(k => `<button class="tb${k === cur ? " on" : ""}" data-k="${k}">${NAMES[k]}</button>`).join("");
-  const pages = PAGES[cur] || [], on = ONPAGE[cur] || {}, note = PNOTE[cur] || {}, R = RESH[cur] || {};
-  const total = new Set(Object.values(on).flat()).size;
+  const pages = PAGES[cur] || [], on = ONPAGE[cur] || {}, role = PROLE[cur] || {}, R = RESH[cur] || {};
+  const all = Object.keys(R).length;
+  const must = Object.values(R).filter(d => d.m);
+  const mp = must.reduce((a, d) => a + d.p, 0);
 
   const sheets = pages.map((f, i) => {
     const nums = on[f] || [];
     const cards = nums.map(n => R[String(n)] ? card(n, R[String(n)]) : "").join("");
+    const rl = role[f] || "";
     const label = nums.length
       ? `Страница ${i + 1} · ${nums.length > 1 ? "задания" : "задание"} ${nums.join(", ")}`
-      : `Страница ${i + 1}${note[f] ? " · " + note[f] : ""}`;
+      : `Страница ${i + 1}${rl ? " · " + rl : ""}`;
     const empty = nums.length ? "" :
-      `<p class="nb">На этой странице заданий нет: ${note[f] || "продолжение предыдущего задания"}.</p>`;
+      `<p class="nb">Заданий на этой странице нет: ${rl || "продолжение предыдущего"}.</p>`;
     return `<section class="sheet">
       <div class="plabel">${label}</div>
       <figure><img src="ege/${f}" alt="Страница демонстрационного варианта ЕГЭ 2027 по предмету ${NAMES[cur]}" loading="lazy"></figure>
@@ -252,31 +260,25 @@ function render() {
     </section>`;
   }).join("");
 
-  const answers = (ANSW[cur] || []).map(f =>
-    `<figure style="margin:0 0 14px"><img src="ege/${f}" alt="Ответы к демонстрационному варианту" loading="lazy"></figure>`).join("");
-
   document.getElementById("out").innerHTML =
-    `<p class="src">Ниже — первая часть демонстрационного варианта ЕГЭ 2027 года по предмету
-     «${NAMES[cur].toLowerCase()}» страница за страницей, ровно так, как она напечатана в КИМе.
-     Всего заданий в первой части: ${total}. Под каждой страницей — разбор тех заданий, которые
-     на ней стоят. © Федеральная служба по надзору в сфере образования и науки (ФИПИ).</p>`
+    `<div class="sum" style="margin:0 0 22px">
+      <p><b>${NAMES[cur]}: ${all} заданий, максимум ${PMAX[cur]} первичных баллов.</b>
+      Чтобы выйти примерно на 60–70 тестовых, нужно около ${P60[cur]} первичных.
+      Такой набор набирается, если уверенно закрыть ${must.length} заданий, отмеченных ниже
+      зелёной полосой, — они дают ${mp} первичных. Остальные можно решать, если останутся силы,
+      но без них 60–70 всё равно достижимы.</p>
+     </div>
+     <p class="src">Ниже — демонстрационный вариант ЕГЭ 2027 года целиком, страница за страницей:
+     инструкция, обе части, ответы и критерии. Под каждой страницей — разбор стоящих на ней заданий.
+     © Федеральная служба по надзору в сфере образования и науки (ФИПИ).</p>`
     + sheets
-    + `<section class="sheet"><div class="plabel">Ответы к первой части</div>${answers}</section>`
     + `<div class="sum">
       <p><b>Важно.</b> ФИПИ пишет в самой демоверсии: «В демонстрационном варианте представлены
       конкретные примеры заданий, не исчерпывающие всего многообразия возможных формулировок
-      заданий на каждой позиции варианта». То есть за одним и тем же номером в разных вариантах
-      стоят разные задачи — иногда из разных тем. Там, где это особенно заметно (математика,
-      физика), в разборе про это сказано отдельно.</p>
+      заданий на каждой позиции варианта». За одним и тем же номером в разных вариантах стоят
+      разные задачи — иногда из разных тем.</p>
       <p><a href="${FIPI}${DEMOFILE[cur] || ""}">Скачать демоверсию ${NAMES[cur].toLowerCase()} 2027 с сайта ФИПИ</a>
-      — весь вариант целиком, вместе со второй частью, критериями и спецификацией.</p>
-    </div>`
-    + `<div class="sum">
-      <p><b>Если почти всё понятно с первого взгляда</b> — предмет скорее подойдёт.</p>
-      <p><b>Если непонятно даже после разбора</b> — это не приговор, но честный сигнал: с нуля
-      за восемь месяцев такой предмет обойдётся заметно дороже по времени.</p>
-      <p>Пролистайте несколько предметов подряд и сравните ощущение. Оценка сложности в углу
-      каждой карточки — для человека, который начинает с нуля.</p>
+      — вариант, спецификация и кодификатор.</p>
     </div>`;
 
   document.querySelectorAll(".tb").forEach(b => b.onclick = () => {
