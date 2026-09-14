@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Стратегия биология плюс география: почему она втрое дешевле математики с физикой, что даёт и чем предстоит заниматься на каждой специальности.">
+<meta name="color-scheme" content="light dark">
+<title>Биология и география — дорога без математики</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,500;0,700;1,500&family=PT+Sans:wght@400;700&display=swap">
+<style>
+:root{
+  --ink:#171a17; --body:#3c423b; --faint:#7c8378;
+  --paper:#fbfaf7; --card:#ffffff; --line:#ddd9cd; --line2:#efece3;
+  --acc:#2f6b4f; --acc-soft:#e4ede7;
+  --ok:#2f6b4f; --mid:#8a6310; --bad:#8c3a2e;
+  --sand:#f2efe6;
+  --sh:0 1px 2px rgba(23,26,23,.05), 0 8px 24px -12px rgba(23,26,23,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#f0efe9; --body:#c6c8c0; --faint:#8b9188;
+  --paper:#141714; --card:#1d211d; --line:#343a33; --line2:#282d27;
+  --acc:#7fc4a1; --acc-soft:#22302a;
+  --ok:#7fc4a1; --mid:#d4a942; --bad:#e08b7c;
+  --sand:#20251f;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+}}
+:root[data-theme="dark"]{
+  --ink:#f0efe9; --body:#c6c8c0; --faint:#8b9188;
+  --paper:#141714; --card:#1d211d; --line:#343a33; --line2:#282d27;
+  --acc:#7fc4a1; --acc-soft:#22302a;
+  --ok:#7fc4a1; --mid:#d4a942; --bad:#e08b7c;
+  --sand:#20251f;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--body);
+  font-family:"PT Sans",-apple-system,Segoe UI,Arial,sans-serif;
+  font-size:16px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 64px}
+h1,h2,h3{font-family:Vollkorn,Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.08;letter-spacing:-.01em}
+h2{font-size:23px;line-height:1.2}
+h3{font-size:18px}
+p{margin:0}
+.lede{font-size:17px;margin-top:12px;max-width:58ch}
+.kick{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+
+/* шапка + прогресс */
+header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:24px}
+.bar{display:flex;gap:3px;margin-top:18px}
+.bar i{flex:1;height:5px;background:var(--line2);border-radius:2px;transition:background .2s}
+.bar i.on{background:var(--acc)}
+.bar i.now{background:var(--ink)}
+
+/* вопрос */
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:24px;box-shadow:var(--sh)}
+.q .step{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.opts{display:grid;gap:8px;margin-top:18px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+  background:transparent;border:1px solid var(--line);border-radius:8px;padding:13px 15px;
+  transition:border-color .12s, background .12s}
+.opt:hover{border-color:var(--acc);background:var(--acc-soft)}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);border-width:2px;padding:12px 14px}
+.opt .mk{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);
+  margin-top:1px}
+.opt.sel .mk{border:6px solid var(--acc)}
+.opt b{display:block;color:var(--ink);font-size:16px;line-height:1.3}
+.opt span{display:block;color:var(--faint);font-size:13.5px;margin-top:3px}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn{background:var(--acc);color:#fff;border:none;border-radius:7px;
+  padding:11px 22px;font-weight:700}
+:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#0f1410}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn{color:#fff}}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.g{background:transparent;color:var(--faint);border:1px solid var(--line)}
+
+/* результат */
+.res{display:grid;gap:22px}
+.set{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:22px;box-shadow:var(--sh)}
+.set.alt{box-shadow:none;background:transparent}
+.set .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  flex-wrap:wrap}
+.subj{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 4px}
+.subj i{font-style:normal;font-family:Vollkorn,serif;font-size:19px;color:var(--ink);
+  background:var(--sand);border-radius:6px;padding:5px 11px;font-weight:700}
+.subj i.m{background:var(--acc-soft);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.stats{display:flex;gap:26px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2);
+  flex-wrap:wrap}
+.stats div b{display:block;font-family:Vollkorn,serif;font-size:26px;color:var(--ink);
+  line-height:1;font-variant-numeric:tabular-nums}
+.stats div span{display:block;font-size:12px;color:var(--faint);margin-top:4px}
+
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14.5px;
+  table-layout:fixed}
+th{text-align:left;font-size:10px;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;padding:0 0 8px 14px;border-bottom:1px solid var(--line);
+  line-height:1.2;vertical-align:bottom;white-space:nowrap}
+th:first-child,td:first-child{padding-left:0}
+th.r,td.r{text-align:right}
+td{padding:10px 0 10px 14px;border-bottom:1px solid var(--line2);vertical-align:top;
+  font-variant-numeric:tabular-nums}
+col.w1{width:62px}col.w2{width:80px}col.w3{width:80px}col.w4{width:126px}
+@media (max-width:720px){table{table-layout:auto;font-size:13.5px}
+  th{font-size:9.5px;padding-left:10px}td{padding-left:10px}
+  col.w1,col.w2,col.w3,col.w4{width:auto}}
+td.nm{font-variant-numeric:normal}
+td.nm b{color:var(--ink);font-weight:400}
+td.nm span{color:var(--faint);font-size:12.5px;display:block}
+.cell-sub{display:block;font-size:10px;color:var(--faint);line-height:1.2;margin-top:1px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:4px;
+  line-height:1.25;max-width:100%;white-space:normal;text-align:right}
+.t0{background:var(--acc-soft);color:var(--ok)}
+.t1{background:rgba(138,99,16,.12);color:var(--mid)}
+.t2{background:rgba(140,58,46,.11);color:var(--bad)}
+.scroll{overflow-x:auto}
+.why{background:var(--sand);border-radius:9px;padding:18px 20px;font-size:14.5px}
+.why h3{margin-bottom:8px}
+.why p+p{margin-top:9px}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--faint)}
+.tog{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.tog button{background:transparent;border:none;padding:7px 13px;font-size:13.5px;color:var(--faint)}
+.tog button.on{background:var(--acc-soft);color:var(--ink);font-weight:700}
+.pk{font-family:Vollkorn,Georgia,serif;font-size:17px;font-weight:700;color:var(--ink);
+  background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:7px 13px;
+  transition:border-color .12s,background .12s}
+.pk:hover{border-color:var(--line)}
+.pk.on{background:var(--acc-soft);border-color:var(--acc)}
+.flds{display:flex;gap:18px;flex-wrap:wrap}
+.flds label{display:block;font-size:13px;color:var(--faint);font-weight:700;
+  letter-spacing:.02em}
+.flds input{display:block;margin-top:6px;width:150px;font-family:Vollkorn,Georgia,serif;
+  font-size:26px;font-weight:700;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;
+  font-variant-numeric:tabular-nums}
+.flds input:focus{outline:none;border-color:var(--acc)}
+.skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
+  text-decoration:underline;text-underline-offset:3px}
+</style>
+<style>
+.back{display:inline-block;font-size:13.5px;color:var(--acc);text-decoration:none;
+  border-bottom:1px solid currentColor;margin-bottom:22px}
+.why{background:var(--sand);border-radius:9px;padding:18px 20px;font-size:14.5px}
+.why h3{margin-bottom:8px} .why p+p{margin-top:9px}
+.spec{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;
+  margin-bottom:16px;box-shadow:var(--sh)}
+.spec h3{font-size:20px}
+.spec .sub{color:var(--faint);font-size:13.5px;margin-top:3px}
+.spec .txt{margin-top:12px;font-size:15px}
+.spec .txt b{display:block;font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--faint);margin:12px 0 3px}
+.plist{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)}
+.plist .r{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:14.5px;flex-wrap:wrap}
+.plist .r .b{font-family:Vollkorn,serif;font-size:17px;font-weight:700;color:var(--ink);
+  width:44px;flex:none;font-variant-numeric:tabular-nums}
+.plist .r .n{flex:1;min-width:150px}
+.plist .r .n i{font-style:normal;color:var(--faint)}
+.plist .r .m{font-size:13px;color:var(--faint);font-variant-numeric:tabular-nums}
+.ef .bar{display:block;height:9px;background:var(--acc);border-radius:2px}
+.ef .track{background:var(--sand);border-radius:2px;height:9px}
+.steps .s{display:grid;grid-template-columns:86px 1fr;gap:14px;padding:12px 0;
+  border-bottom:1px solid var(--line2)}
+.steps .s:first-child{border-top:1px solid var(--line)}
+.steps .s .m{font-family:Vollkorn,serif;font-weight:700;color:var(--ink)}
+.steps .s .d b{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← к подбору по предметам и аттестату</a>
+<header style="border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px">
+<div class="kick">Дорога без профильной математики</div>
+<h1 style="margin-top:10px">Биология и география</h1>
+<p class="lede">Набор, который учится втрое дешевле математики с физикой и не ломается от одной неудачи. Здесь — почему он легче, что открывает и чем придётся заниматься на каждой специальности.</p>
+<div class="stats" style="margin-top:22px">
+<div><b class="num">272</b><span>часа обоих курсов<br>против 748 у математики с физикой</span></div>
+<div><b class="num">8</b><span>часов в неделю<br>вместе с русским</span></div>
+<div><b class="num">18</b><span>программ<br>в трёх городах</span></div>
+<div><b class="num">133</b><span>самый низкий<br>проходной</span></div>
+</div></header>
+<section><h2>Почему это легче математики</h2>
+<div class="why" style="margin-top:14px"><h3>Три причины, и часы — только первая</h3><p><b>Объём.</b> Школьный курс географии — 68 часов, биологии — 204. Профильная математика — 544 часа, и это только программа, без тренировки. Один первичный балл по математике стоит около 25 часов работы, по биологии — три с половиной, по географии — полтора.</p><p><b>Биологию можно учить частями.</b> Разделы независимы: не пошла ботаника — берёшь баллы на анатомии, генетике и экологии. В математике темы цепляются одна за другую: без дробей нет степеней, без степеней — логарифмов, без них — производной. С нулевой базой это главный риск: застрять в октябре на программе седьмого класса и не сдвинуться.</p><p><b>Частичные баллы.</b> В биологии и географии много заданий на соответствие и выбор нескольких ответов, где за половину верного дают балл. Полузнание превращается в результат. В первой части математики и физики оценка только «единица или ноль»: ответ либо сошёлся, либо нет.</p></div></section>
+<section><h2>Все предметы по трудности</h2>
+<p class="lede" style="font-size:16px">Коэффициент усилий — от 1 до 10. Считается из объёма курса, нужна ли непрерывная база, есть ли частичные баллы и можно ли учить кусками. Для человека, который начинает с нуля и звёзд с неба не хватает, важны последние три, а не только часы.</p>
+<div class="scroll"><table><colgroup><col style="width:126px"><col><col class="w1"><col class="w2"><col class="w1"></colgroup><tr><th>Предмет</th><th>Усилие</th><th class="r">Часов</th><th class="r">Порог,<br>первичных</th><th class="r">Доля от<br>максимума</th></tr>
+<tr><td class="nm"><b>География</b><span>половина заданий — работа с картой и таблицей</span></td><td class="ef"><div class="track"><i class="bar" style="width:10%"></i></div><span class="cell-sub">1,0 из 10</span></td><td class="r">68</td><td class="r">11<span class="cell-sub">= 40 баллов</span></td><td class="r">29%</td></tr>
+<tr><td class="nm"><b>История</b><span>даты и карты, много механического запоминания</span></td><td class="ef"><div class="track"><i class="bar" style="width:15%"></i></div><span class="cell-sub">1,5 из 10</span></td><td class="r">136</td><td class="r">10<span class="cell-sub">= 36 баллов</span></td><td class="r">24%</td></tr>
+<tr><td class="nm"><b>Русский</b><span>нужен всем, сочинение по шаблону</span></td><td class="ef"><div class="track"><i class="bar" style="width:17%"></i></div><span class="cell-sub">1,7 из 10</span></td><td class="r">136</td><td class="r">18<span class="cell-sub">= 40 баллов</span></td><td class="r">36%</td></tr>
+<tr><td class="nm"><b>Обществознание</b><span>самый высокий порог: 45</span></td><td class="ef"><div class="track"><i class="bar" style="width:17%"></i></div><span class="cell-sub">1,7 из 10</span></td><td class="r">136</td><td class="r">23<span class="cell-sub">= 45 баллов</span></td><td class="r">40%</td></tr>
+<tr><td class="nm"><b>Биология</b><span>разделы независимы, можно учить частями</span></td><td class="ef"><div class="track"><i class="bar" style="width:21%"></i></div><span class="cell-sub">2,1 из 10</span></td><td class="r">204</td><td class="r">17<span class="cell-sub">= 39 баллов</span></td><td class="r">30%</td></tr>
+<tr><td class="nm"><b>Литература</b><span>двенадцать сочинений и список наизусть</span></td><td class="ef"><div class="track"><i class="bar" style="width:36%"></i></div><span class="cell-sub">3,6 из 10</span></td><td class="r">170</td><td class="r">20<span class="cell-sub">= 40 баллов</span></td><td class="r">42%</td></tr>
+<tr><td class="nm"><b>Иностранный</b><span>язык копится годами, есть устная часть</span></td><td class="ef"><div class="track"><i class="bar" style="width:61%"></i></div><span class="cell-sub">6,1 из 10</span></td><td class="r">204</td><td class="r">25<span class="cell-sub">= 30 баллов</span></td><td class="r">30%</td></tr>
+<tr><td class="nm"><b>Физика</b><span>каждое задание — решение с формулой</span></td><td class="ef"><div class="track"><i class="bar" style="width:73%"></i></div><span class="cell-sub">7,3 из 10</span></td><td class="r">204</td><td class="r">9<span class="cell-sub">= 39 баллов</span></td><td class="r">20%</td></tr>
+<tr><td class="nm"><b>Химия</b><span>расчёты и цепочки, без базы не идёт</span></td><td class="ef"><div class="track"><i class="bar" style="width:73%"></i></div><span class="cell-sub">7,3 из 10</span></td><td class="r">204</td><td class="r">13<span class="cell-sub">= 39 баллов</span></td><td class="r">23%</td></tr>
+<tr><td class="nm"><b>Информатика</b><span>порог 44 — самый высокий, задание 27 на Python</span></td><td class="ef"><div class="track"><i class="bar" style="width:80%"></i></div><span class="cell-sub">8,0 из 10</span></td><td class="r">272</td><td class="r">8<span class="cell-sub">= 44 баллов</span></td><td class="r">28%</td></tr>
+<tr><td class="nm"><b>Математика</b><span>темы цепляются одна за другую, пропуск блокирует</span></td><td class="ef"><div class="track"><i class="bar" style="width:100%"></i></div><span class="cell-sub">10,0 из 10</span></td><td class="r">544</td><td class="r">7<span class="cell-sub">= 39 баллов</span></td><td class="r">21%</td></tr>
+</table></div>
+<p style="font-size:13.5px;color:var(--faint);margin-top:12px">Порог — минимальный балл для подачи документов в вуз. Доля от максимума показывает, какую часть работы нужно сделать, чтобы его взять: у физики и математики она самая маленькая, но каждое задание там дороже по усилию.</p>
+</section>
+<section><h2>Что получится при разном исходе</h2>
+<div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w2"></colgroup><tr><th>Сценарий</th><th class="r">Сумма</th><th class="r">Программ</th><th class="r">Мест</th></tr>
+<tr><td class="nm"><b>Биология провалена: 36, география 55</b></td><td class="r">146</td><td class="r"><span class="tag t2">5</span></td><td class="r">83</td></tr>
+<tr><td class="nm"><b>Минимум: биология 40, география 60</b></td><td class="r">158</td><td class="r"><span class="tag t1">8</span></td><td class="r">132</td></tr>
+<tr><td class="nm"><b>Рабочая цель: биология 50, география 62</b></td><td class="r">172</td><td class="r"><span class="tag t0">11</span></td><td class="r">181</td></tr>
+<tr><td class="nm"><b>Хороший результат: биология 55, география 68</b></td><td class="r">188</td><td class="r"><span class="tag t0">15</span></td><td class="r">248</td></tr>
+</table></div>
+<p style="font-size:14.5px;margin-top:14px"><b>Главное свойство этого набора — он не ломается.</b> Даже если биология не пойдёт совсем, остаётся пять программ. У математики с физикой ниже порога не остаётся ничего.</p></section>
+<section><h2>Куда именно и чем заниматься</h2>
+<p class="lede" style="font-size:16px">Восемнадцать программ, сгруппированных по профессиям. Проходные — итоги приёма 2026 года, конкурс — заявлений на место.</p>
+<div class="spec"><h3>Водные биоресурсы и аквакультура</h3><div class="sub">Рыбоводство и рыбное хозяйство</div>
+<div class="txt"><b>Чему учат</b>Разведение рыбы в прудах и садках, кормление, лечение, контроль воды. Учат ихтиологию — как устроены рыбы, гидробиологию — что живёт в водоёме, и технологию: как из икры вырастить товарную рыбу.<b>Где потом работать</b>Рыбхозы и рыбопитомники, рыбоохрана, предприятия по переработке рыбы, лаборатории качества воды. В Астрахани и Волго-Ахтубинской пойме это профильный регион — работа есть.<b>Кому подойдёт</b>Кто готов работать на воде и в поле, а не в кабинете.</div>
+<div class="plist">
+<div class="r"><div class="b">133</div><div class="n">Водные биоресурсы и аквакультура <i>· АГТУ, Астрахань</i></div><div class="m">20 мест · конкурс 7,4</div><span class="tag t0">реально</span></div>
+<div class="r"><div class="b">152</div><div class="n">Водные биоресурсы и аквакультура <i>· ВолГАУ, Волгоград</i></div><div class="m">16 мест · конкурс 7,4</div><span class="tag t0">реально</span></div>
+</div></div>
+<div class="spec"><h3>Садоводство</h3><div class="sub">Плодовые сады, овощеводство, теплицы</div>
+<div class="txt"><b>Чему учат</b>Как закладывать сад, прививать деревья, бороться с вредителями, вести теплицу круглый год. Много практики в поле и в лаборатории: почва, удобрения, сорта.<b>Где потом работать</b>Тепличные комбинаты, питомники, фермерские и садовые хозяйства, агрофирмы, садовые центры — от агронома до управляющего участком.<b>Кому подойдёт</b>Кто не против физической работы и сезонного ритма.</div>
+<div class="plist">
+<div class="r"><div class="b">137</div><div class="n">Садоводство <i>· ВолГАУ, Волгоград</i></div><div class="m">14 мест · конкурс 12,4</div><span class="tag t0">реально</span></div>
+</div></div>
+<div class="spec"><h3>Лесное дело</h3><div class="sub">Лес, лесовосстановление, охрана</div>
+<div class="txt"><b>Чему учат</b>Таксация — измерение и учёт леса, лесовосстановление, защита от пожаров и вредителей, правовые основы лесопользования. Много полевых практик.<b>Где потом работать</b>Лесничества, питомники, лесхозы, природные парки, компании лесозаготовки, МЧС по лесным пожарам.<b>Кому подойдёт</b>Кто любит быть на воздухе и в разъездах, а не за столом.</div>
+<div class="plist">
+<div class="r"><div class="b">140</div><div class="n">Лесное дело <i>· ВолГАУ, Волгоград</i></div><div class="m">6 мест · конкурс 8,8</div><span class="tag t0">реально</span></div>
+</div></div>
+<div class="spec"><h3>Производство и переработка сельхозпродукции</h3><div class="sub">От поля до продукта</div>
+<div class="txt"><b>Чему учат</b>Два профиля: растениеводство и животноводство. Как вырастить сырьё и что с ним делать дальше — хранение, переработка, стандарты качества, технология молока, мяса, зерна.<b>Где потом работать</b>Агрохолдинги, молокозаводы, мясокомбинаты, элеваторы, службы качества, фермерские хозяйства.<b>Кому подойдёт</b>Самая широкая из аграрных: можно уйти и в поле, и на производство.</div>
+<div class="plist">
+<div class="r"><div class="b">141</div><div class="n">Производство и переработка сельхозпродукции — животноводство <i>· ВолГАУ, Волгоград</i></div><div class="m">12 мест · конкурс 8,4</div><span class="tag t0">реально</span></div>
+<div class="r"><div class="b">142</div><div class="n">Производство и переработка сельхозпродукции — растениеводство <i>· ВолГАУ, Волгоград</i></div><div class="m">31 мест · конкурс 4,1</div><span class="tag t0">реально</span></div>
+</div></div>
+<div class="spec"><h3>Ландшафтная архитектура</h3><div class="sub">Парки, скверы, благоустройство</div>
+<div class="txt"><b>Чему учат</b>Проектирование зелёных зон: чертежи, растения, дренаж, малые формы. Нужен глазомер и аккуратность в графике — часть занятий это рисунок и проект.<b>Где потом работать</b>Проектные бюро, отделы благоустройства администраций, питомники растений, компании озеленения, частные заказы на участки.<b>Кому подойдёт</b>Единственная из списка, где есть заметная творческая часть.</div>
+<div class="plist">
+<div class="r"><div class="b">147</div><div class="n">Ландшафтная архитектура <i>· ВГСПУ, Волгоград</i></div><div class="m">11 мест</div><span class="tag t0">реально</span></div>
+<div class="r"><div class="b">183</div><div class="n">Ландшафтная архитектура <i>· ВолГАУ, Волгоград</i></div><div class="m">16 мест · конкурс 8,6</div><span class="tag t1">впритык</span></div>
+</div></div>
+<div class="spec"><h3>Экология и природопользование</h3><div class="sub">Контроль состояния среды</div>
+<div class="txt"><b>Чему учат</b>Как измерять загрязнение воздуха, воды и почвы, вести отчётность предприятия перед надзором, делать оценку воздействия на среду. Химия и биология плюс документы и нормативы.<b>Где потом работать</b>Экологи на заводах — обязательная должность по закону, надзорные органы, лаборатории, проектные институты, очистные сооружения.<b>Кому подойдёт</b>Самая «кабинетная» из списка: много бумаг и отчётности, но и спрос стабильный.</div>
+<div class="plist">
+<div class="r"><div class="b">152</div><div class="n">Экология и природопользование <i>· ВолГУ, Волгоград</i></div><div class="m">22 мест</div><span class="tag t0">реально</span></div>
+<div class="r"><div class="b">168</div><div class="n">Экология и природопользование <i>· ВФ ВолГУ, Волжский</i></div><div class="m">25 мест · конкурс 2,8</div><span class="tag t1">впритык</span></div>
+<div class="r"><div class="b">188</div><div class="n">Экология и природопользование <i>· ВолГАУ, Волгоград</i></div><div class="m">15 мест · конкурс 11,4</div><span class="tag t2">трудно</span></div>
+</div></div>
+<div class="spec"><h3>Агрохимия и агропочвоведение</h3><div class="sub">Почва, удобрения, анализы</div>
+<div class="txt"><b>Чему учат</b>Из чего состоит почва, чего ей не хватает, сколько и каких удобрений вносить. Много лабораторной работы с пробами.<b>Где потом работать</b>Агрохимические станции и лаборатории, агрохолдинги, компании — поставщики удобрений, испытательные центры.<b>Кому подойдёт</b>Кому нравится точная работа с приборами и пробами.</div>
+<div class="plist">
+<div class="r"><div class="b">161</div><div class="n">Агрохимия и агропочвоведение <i>· ВолГАУ, Волгоград</i></div><div class="m">11 мест · конкурс 13,1</div><span class="tag t0">реально</span></div>
+</div></div>
+<div class="spec"><h3>Агрономия и защита растений</h3><div class="sub">Урожай и борьба с вредителями</div>
+<div class="txt"><b>Чему учат</b>Севооборот, сорта, сроки посева, болезни растений и способы защиты. Профиль «защита растений» — про вредителей, грибки и препараты.<b>Где потом работать</b>Агрономы в хозяйствах, консультанты компаний по семенам и средствам защиты, испытательные станции, надзор в сельском хозяйстве.<b>Кому подойдёт</b>Ключевая профессия в аграрном регионе, но работа сезонная и в полях.</div>
+<div class="plist">
+<div class="r"><div class="b">169</div><div class="n">Агрономия — защита растений <i>· ВолГАУ, Волгоград</i></div><div class="m">13 мест · конкурс 7,2</div><span class="tag t1">впритык</span></div>
+<div class="r"><div class="b">182</div><div class="n">Агрономия <i>· ВолГАУ, Волгоград</i></div><div class="m">12 мест · конкурс 13,1</div><span class="tag t1">впритык</span></div>
+</div></div>
+<div class="spec"><h3>Картография и геоинформатика</h3><div class="sub">Карты и пространственные данные</div>
+<div class="txt"><b>Чему учат</b>Geoинформационные системы, съёмка местности, обработка спутниковых снимков, построение карт и слоёв данных. Это ближе к работе за компьютером, чем всё остальное в списке.<b>Где потом работать</b>Кадастровые и землеустроительные компании, геодезические службы, МЧС и администрации, IT-компании с геоданными, сельское хозяйство — точное земледелие.<b>Кому подойдёт</b>Самая техническая из доступных: если тянет к компьютеру, это сюда.</div>
+<div class="plist">
+<div class="r"><div class="b">176</div><div class="n">Картография и геоинформатика <i>· ВолГУ, Волгоград</i></div><div class="m">24 мест</div><span class="tag t1">впритык</span></div>
+</div></div>
+<div class="spec"><h3>Физическая культура и спорт</h3><div class="sub">Тренер, преподаватель, адаптивный спорт</div>
+<div class="txt"><b>Чему учат</b>Анатомия, физиология, методика тренировки, педагогика. Есть отдельный профиль адаптивной физкультуры — работа с людьми с ограничениями здоровья.<b>Где потом работать</b>Школы и спортшколы, фитнес-клубы, реабилитационные центры, федерации.<b>Кому подойдёт</b>Внимание: кроме ЕГЭ здесь сдаётся профессиональное испытание по спорту, и проходные выше — от 212 баллов.</div>
+<div class="plist">
+<div class="r"><div class="b">212</div><div class="n">Физическая культура <i>· ВГАФК, Волгоград</i></div><div class="m">7 мест · конкурс 3,9</div><span class="tag t2">трудно</span></div>
+<div class="r"><div class="b">224</div><div class="n">Адаптивная физическая культура <i>· ВГАФК, Волгоград</i></div><div class="m">8 мест · конкурс 6,6</div><span class="tag t2">трудно</span></div>
+<div class="r"><div class="b">235</div><div class="n">Спорт <i>· ВГАФК, Волгоград</i></div><div class="m">120 мест</div><span class="tag t2">трудно</span></div>
+</div></div>
+</section>
+<section><h2>Восемь месяцев по шагам</h2>
+<div class="steps" style="margin-top:16px">
+<div class="s"><div class="m">Сентябрь<br>ноябрь</div><div class="d"><b>География вперёд</b>
+Три часа в неделю на географию, два на биологию. География короткая, и первая победа придёт быстро —
+к ноябрю пробник должен давать 50 баллов. Биология идёт ровно: цитология, ботаника, зоология.</div></div>
+<div class="s"><div class="m">Декабрь</div><div class="d"><b>Проверка</b>
+Полный пробник по обоим. Ориентир: география 50+, биология 30+. Если география ниже 45 —
+дело в занятиях, а не в способностях: предмет слишком простой, чтобы застрять.</div></div>
+<div class="s"><div class="m">Январь<br>март</div><div class="d"><b>Биология выходит вперёд</b>
+Четыре-пять часов на биологию: анатомия, генетика, эволюция, экология. География переходит
+в поддержку — один пробник в неделю. Подключается русский, два часа.</div></div>
+<div class="s"><div class="m">Апрель<br>май</div><div class="d"><b>Только варианты</b>
+Новых тем не берём. Два полных пробника в неделю с разбором ошибок и повторение того,
+что уже умеем.</div></div>
+</div>
+<div class="why" style="margin-top:18px"><h3>Одно важное условие</h3>
+<p>Биологию нельзя учить наскоками — она держится на повторении. Выученное в октябре без возврата
+к маю выветрится. Нужны карточки или тетрадь повторений: три раза в неделю по двадцать минут
+поверх основных часов. Это единственное место, где стратегия может незаметно развалиться.</p></div>
+</section>
+<section><h2>Чего этот набор не даёт</h2>
+<div class="why"><h3>Потолок и закрытые двери</h3>
+<p><b>Выше 188 баллов список не растёт.</b> Пятнадцать программ, 248 мест — это предел набора.
+Если Марк неожиданно выйдет на 200, лишние баллы будет некуда деть.</p>
+<p><b>Инженерия, IT и экономика закрыты полностью.</b> Не «трудно», а никак: там везде нужна
+профильная математика. Передумать в апреле не получится — заявление на предметы подаётся до 1 февраля.</p>
+<p><b>Почти всё — аграрное и полевое.</b> Из восемнадцати программ только картография с геоинформатикой
+и отчасти экология дают кабинетную работу. Остальное — поля, теплицы, пруды и лес.</p>
+</div></section>
+<footer class="foot">Проходные баллы и конкурс — итоги приёма-2026. Часы — объём школьного курса по федеральной программе, взятый как ориентир для подготовки с нуля; оценка усилий — авторская, точность порядка ±20 процентов. Описания профессий — по образовательным программам вузов.</footer>
+</div></body></html>
