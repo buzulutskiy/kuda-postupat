@@ -153,10 +153,10 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .thead h3{font-size:19px;display:inline}
 .thead span{font-size:13px;color:var(--faint);margin-left:9px}
 .tnum{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
-.spec{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
-  border-bottom:1px solid var(--line2);flex-wrap:wrap}
-.spec.near{background:var(--acc-soft);border-radius:8px;padding:11px 13px;margin:4px 0;
-  border-bottom:none}
+.spec{display:flex;justify-content:space-between;gap:16px;padding:13px 14px;
+  border:1px solid var(--line);border-radius:9px;background:var(--card);margin-bottom:8px;
+  flex-wrap:wrap}
+.spec.near{background:var(--acc-soft);border-color:var(--acc)}
 .sl b{display:block;color:var(--ink);font-size:15.5px;font-weight:400}
 .sl span{display:block;font-size:12.5px;color:var(--faint);margin-top:2px}
 .sl i{display:block;font-style:normal;font-size:12px;color:var(--faint);margin-top:4px;
@@ -172,14 +172,14 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .kmark.kn{background:rgba(138,99,16,.12);color:var(--mid)}
 .kmark.kb{background:rgba(140,58,46,.12);color:var(--bad)}
 .tophead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
-.tnote{font-size:13px;color:var(--faint);margin:12px 0 6px;max-width:64ch}
+.tnote{font-size:13px;color:var(--faint);margin:12px 0 18px;max-width:64ch}
+.listwrap{background:transparent;border:none;padding:0;box-shadow:none}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
 .chip{background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:6px 11px;
   font-size:13px;color:var(--body);transition:.12s}
 .chip:hover{border-color:var(--line)}
 .chip.on{background:var(--acc-soft);border-color:var(--acc);color:var(--ink);font-weight:700}
-.srokhead{display:flex;align-items:baseline;gap:10px;margin:22px 0 6px;padding-top:12px;
-  border-top:1px solid var(--line)}
+.srokhead{display:flex;align-items:baseline;gap:10px;margin:26px 0 10px}
 .srokhead b{font-family:Vollkorn,Georgia,serif;font-size:20px;color:var(--ink)}
 .srokhead span{font-size:13px;color:var(--acc);font-weight:700}
 @media (max-width:560px){.spec{flex-direction:column;gap:6px}.sr{text-align:left;align-items:flex-start}}
@@ -888,7 +888,7 @@ function renderAtt(app) {
       Программы без неё из списка убраны, но перед подачей стоит проверить свою в реестре
       Рособрнадзора.</p>
     </div>
-    <section class="set alt" style="padding:0">
+    <section class="listwrap">
       <div class="kick" style="margin-bottom:10px">Сортировка по сроку обучения · фильтр по отрасли</div>
       ${attFlat(ok)}
     </section>
