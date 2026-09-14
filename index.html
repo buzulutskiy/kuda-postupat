@@ -409,8 +409,10 @@ function temaOf(p) {
   for (const [name, re, sub] of TEMY) if (re.test(p.code || "")) return name;
   return "Прочее";
 }
-const KOLSLUG = {"ВПТ": "volzhskiy-politekhnicheskiy-tekhnikum", "ВЭК": "volgogradskiy-energeticheskiy-kolledzh", "ВИТ": "volgogradskiy-industrialnyy-tekhnikum", "ВКМиС": "volgogradskiy-kolledzh-mashinostroeniya-i-svyazi", "Гагарина": "volgogradskiy-kolledzh-upravleniya-i-novykh-tekhnologiy-im-yu-gagarina", "ВМЭТ": "volgogradskiy-mediko-ekologicheskiy-tekhnikum", "ВМК": "volgogradskiy-meditsinskiy-kolledzh", "ВПК": "volgogradskiy-politekhnicheskiy-kolledzh-imeni-vi-vernadskogo", "ВПТКР": "volgogradskiy-professionalnyy-tekhnikum-kadrovykh-resursov", "ВСПК": "volgogradskiy-sotsialno-pedagogicheskiy-kolledzh", "ВСТ": "volgogradskiy-stroitelnyy-tekhnikum", "ВТВТ": "volgogradskiy-tekhnikum-vodnogo-transporta-imeni-admirala-flota-nd-sergeeva", "ВТК": "volgogradskiy-tekhnologicheskiy-kolledzh", "ВолГУ-В": "universitetskiy-kolledzh-volzhskogo-filiala-volgogradskogo-gosudarstvennogo-universiteta", "ВГИИК": "kolledzh-iskusstv-i-kultury-volgogradskogo-gosudarstvennogo-instituta-iskusstv-i-kultury"};
+const KOLSLUG = {"ВПТ": "volzhskiy-politekhnicheskiy-tekhnikum", "ВЭК": "volgogradskiy-energeticheskiy-kolledzh", "ВИТ": "volgogradskiy-industrialnyy-tekhnikum", "ВКМиС": "volgogradskiy-kolledzh-mashinostroeniya-i-svyazi", "Гагарина": "volgogradskiy-kolledzh-upravleniya-i-novykh-tekhnologiy-im-yu-gagarina", "ВМЭТ": "volgogradskiy-mediko-ekologicheskiy-tekhnikum", "ВМК": "volgogradskiy-meditsinskiy-kolledzh", "ВПК": "volgogradskiy-politekhnicheskiy-kolledzh-imeni-vi-vernadskogo", "ВПТКР": "volgogradskiy-professionalnyy-tekhnikum-kadrovykh-resursov", "ВСПК": "volgogradskiy-sotsialno-pedagogicheskiy-kolledzh", "ВСТ": "volgogradskiy-stroitelnyy-tekhnikum", "ВТВТ": "volgogradskiy-tekhnikum-vodnogo-transporta-imeni-admirala-flota-nd-sergeeva", "ВТК": "volgogradskiy-tekhnologicheskiy-kolledzh", "ВолГУ-В": "universitetskiy-kolledzh-volzhskogo-filiala-volgogradskogo-gosudarstvennogo-universiteta", "ВГИИК": "kolledzh-iskusstv-i-kultury-volgogradskogo-gosudarstvennogo-instituta-iskusstv-i-kultury", "ВТехК": "volgogradskiy-tekhnicheskiy-kolledzh", "ВТЖТ": "volgogradskiy-tekhnikum-zheleznodorozhnogo-transporta-i-kommunikatsiy", "ВКРСиТ": "volgogradskiy-kolledzh-restorannogo-servisa-i-torgovli", "ВолГАУ": "institut-nepreryvnogo-obrazovaniya-volgogradskogo-gosudarstvennogo-agrarnogo-universiteta", "Газпром": "gazprom-kolledzh-volgograd-imeni-i-a-matlashova", "ВМЭТ-В": "volzhskiy-filial-volgogradskogo-mediko-ekologicheskogo-tehnikuma", "ВИЭПП": "povolzhskiy-gosudarstvennyy-kolledzh"};
 const PKU = "https://www.postupashkin.ru/colleges/";
+const PKQ = "https://www.postupashkin.ru/colleges?q=";
+const kolLink = k => KOLSLUG[k] ? PKU + KOLSLUG[k] : PKQ + encodeURIComponent(KOL[k].full);
 const CITY_ORDER = {"Волжский": 0, "Светлый Яр": 1, "Волгоград": 2};
 function attPick(ball9, ball11) {
   return SPO.filter(p => p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
@@ -835,7 +837,8 @@ function attFlat(rows) {
         <span>${esc(KOL[p.k].full)} · ${esc(p.c)}${p.c === "Волжский" ? " · рядом" : ""}${
           p.q != null ? " · конкурс " + (p.q < 1 ? "недобор" : fq(p.q)) : ""} · ${temaOf(p).toLowerCase()}</span>
         ${KOLREP[p.k] ? `<i>${esc(KOLREP[p.k].t)}</i>` : ""}
-        ${KOLSLUG[p.k] ? `<a class="chk" href="${PKU}${KOLSLUG[p.k]}" target="_blank" rel="noopener">проверить на Поступашкине →</a>` : ""}
+        <a class="chk" href="${kolLink(p.k)}" target="_blank" rel="noopener">${
+          KOLSLUG[p.k] ? "проверить на Поступашкине →" : "найти на Поступашкине →"}</a>
       </div>
       <div class="sr">
         ${repBadge(p.k)}
