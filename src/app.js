@@ -112,13 +112,18 @@ function tasksBlock(nab) {
           ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, развёрнутые задачи можно не трогать.`
           : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
     const body = t.list
-      ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol, fmt]) => {
+      ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol, fmt], idx) => {
           const on = nb && nb.keep.has(n);
+          const div = idx === 0
+            ? `<div class="partline first"><b>Часть 1</b><span>краткий ответ · ${t.part1} заданий · ${t.pb1} первичных</span></div>`
+            : (n > t.part1 && t.list[idx - 1][0] <= t.part1
+              ? `<div class="partline"><b>Часть 2</b><span>развёрнутый ответ, проверяет эксперт · ${t.total - t.part1} заданий · ${t.pmax - t.pb1} первичных</span></div>`
+              : "");
           const self = /написать|сочинение|программу|решение|развёрнут|объяснить|аргумент|сопоставл|разобрать|план/.test(fmt)
             ? "hard" : (/выбрать/.test(fmt) ? "easy" : "mid");
           const tk = taskK(k, b, lvl, ty, vol, fmt);
           const w = Math.round(tk / 10 * 100);
-          return `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
+          return div + `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
             <span class="tn">${n}</span>
             <span class="tt">${name}<span class="tw">${fmt}</span></span>
             <span class="tks"><i style="width:${w}%" class="${self}"></i><b>${KWORD(tk)}</b></span>
