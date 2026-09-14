@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Знакомство с предметами ЕГЭ: по пять настоящих базовых заданий с разбором, чтобы понять, что понятнее и интереснее.">
+<meta name="color-scheme" content="light dark">
+<title>Посмотреть, как это решается</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,500;0,700;1,500&family=PT+Sans:wght@400;700&display=swap">
+<style>
+:root{
+  --ink:#171a17; --body:#3c423b; --faint:#7c8378;
+  --paper:#fbfaf7; --card:#ffffff; --line:#ddd9cd; --line2:#efece3;
+  --acc:#2f6b4f; --acc-soft:#e4ede7;
+  --ok:#2f6b4f; --mid:#8a6310; --bad:#8c3a2e;
+  --sand:#f2efe6;
+  --sh:0 1px 2px rgba(23,26,23,.05), 0 8px 24px -12px rgba(23,26,23,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#f0efe9; --body:#c6c8c0; --faint:#8b9188;
+  --paper:#141714; --card:#1d211d; --line:#343a33; --line2:#282d27;
+  --acc:#7fc4a1; --acc-soft:#22302a;
+  --ok:#7fc4a1; --mid:#d4a942; --bad:#e08b7c;
+  --sand:#20251f;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+}}
+:root[data-theme="dark"]{
+  --ink:#f0efe9; --body:#c6c8c0; --faint:#8b9188;
+  --paper:#141714; --card:#1d211d; --line:#343a33; --line2:#282d27;
+  --acc:#7fc4a1; --acc-soft:#22302a;
+  --ok:#7fc4a1; --mid:#d4a942; --bad:#e08b7c;
+  --sand:#20251f;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--body);
+  font-family:"PT Sans",-apple-system,Segoe UI,Arial,sans-serif;
+  font-size:16px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 64px}
+h1,h2,h3{font-family:Vollkorn,Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.08;letter-spacing:-.01em}
+h2{font-size:23px;line-height:1.2}
+h3{font-size:18px}
+p{margin:0}
+.lede{font-size:17px;margin-top:12px;max-width:58ch}
+.kick{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+
+/* шапка + прогресс */
+header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:24px}
+.bar{display:flex;gap:3px;margin-top:18px}
+.bar i{flex:1;height:5px;background:var(--line2);border-radius:2px;transition:background .2s}
+.bar i.on{background:var(--acc)}
+.bar i.now{background:var(--ink)}
+
+/* вопрос */
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:24px;box-shadow:var(--sh)}
+.q .step{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.opts{display:grid;gap:8px;margin-top:18px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+  background:transparent;border:1px solid var(--line);border-radius:8px;padding:13px 15px;
+  transition:border-color .12s, background .12s}
+.opt:hover{border-color:var(--acc);background:var(--acc-soft)}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);border-width:2px;padding:12px 14px}
+.opt .mk{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);
+  margin-top:1px}
+.opt.sel .mk{border:6px solid var(--acc)}
+.opt b{display:block;color:var(--ink);font-size:16px;line-height:1.3}
+.opt span{display:block;color:var(--faint);font-size:13.5px;margin-top:3px}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn{background:var(--acc);color:#fff;border:none;border-radius:7px;
+  padding:11px 22px;font-weight:700}
+:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#0f1410}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn{color:#fff}}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.g{background:transparent;color:var(--faint);border:1px solid var(--line)}
+
+/* результат */
+.res{display:grid;gap:22px}
+.set{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:22px;box-shadow:var(--sh)}
+.set.alt{box-shadow:none;background:transparent}
+.set .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  flex-wrap:wrap}
+.subj{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 4px}
+.subj i{font-style:normal;font-family:Vollkorn,serif;font-size:19px;color:var(--ink);
+  background:var(--sand);border-radius:6px;padding:5px 11px;font-weight:700}
+.subj i.m{background:var(--acc-soft);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.stats{display:flex;gap:26px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2);
+  flex-wrap:wrap}
+.stats div b{display:block;font-family:Vollkorn,serif;font-size:26px;color:var(--ink);
+  line-height:1;font-variant-numeric:tabular-nums}
+.stats div span{display:block;font-size:12px;color:var(--faint);margin-top:4px}
+
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14.5px;
+  table-layout:fixed}
+th{text-align:left;font-size:10px;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;padding:0 0 8px 14px;border-bottom:1px solid var(--line);
+  line-height:1.2;vertical-align:bottom;white-space:nowrap}
+th:first-child,td:first-child{padding-left:0}
+th.r,td.r{text-align:right}
+td{padding:10px 0 10px 14px;border-bottom:1px solid var(--line2);vertical-align:top;
+  font-variant-numeric:tabular-nums}
+col.w1{width:62px}col.w2{width:80px}col.w3{width:80px}col.w4{width:126px}
+@media (max-width:720px){table{table-layout:auto;font-size:13.5px}
+  th{font-size:9.5px;padding-left:10px}td{padding-left:10px}
+  col.w1,col.w2,col.w3,col.w4{width:auto}}
+td.nm{font-variant-numeric:normal}
+td.nm b{color:var(--ink);font-weight:400}
+td.nm span{color:var(--faint);font-size:12.5px;display:block}
+.cell-sub{display:block;font-size:10px;color:var(--faint);line-height:1.2;margin-top:1px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:4px;
+  line-height:1.25;max-width:100%;white-space:normal;text-align:right}
+.t0{background:var(--acc-soft);color:var(--ok)}
+.t1{background:rgba(138,99,16,.12);color:var(--mid)}
+.t2{background:rgba(140,58,46,.11);color:var(--bad)}
+.scroll{overflow-x:auto}
+.why{background:var(--sand);border-radius:9px;padding:18px 20px;font-size:14.5px}
+.why h3{margin-bottom:8px}
+.why p+p{margin-top:9px}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--faint)}
+.tog{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.tog button{background:transparent;border:none;padding:7px 13px;font-size:13.5px;color:var(--faint)}
+.tog button.on{background:var(--acc-soft);color:var(--ink);font-weight:700}
+.pk{font-family:Vollkorn,Georgia,serif;font-size:17px;font-weight:700;color:var(--ink);
+  background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:7px 13px;
+  transition:border-color .12s,background .12s}
+.pk:hover{border-color:var(--line)}
+.pk.on{background:var(--acc-soft);border-color:var(--acc)}
+.flds{display:flex;gap:18px;flex-wrap:wrap}
+.flds label{display:block;font-size:13px;color:var(--faint);font-weight:700;
+  letter-spacing:.02em}
+.flds input{display:block;margin-top:6px;width:150px;font-family:Vollkorn,Georgia,serif;
+  font-size:26px;font-weight:700;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;
+  font-variant-numeric:tabular-nums}
+.flds input:focus{outline:none;border-color:var(--acc)}
+.skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
+  text-decoration:underline;text-underline-offset:3px}
+</style>
+<style>
+.back{display:inline-block;font-size:13.5px;color:var(--acc);text-decoration:none;
+  border-bottom:1px solid currentColor;margin-bottom:22px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.tb{font-family:Vollkorn,Georgia,serif;font-size:16px;font-weight:700;color:var(--ink);
+  background:var(--sand);border:1.5px solid transparent;border-radius:8px;padding:8px 14px;
+  transition:.12s}
+.tb:hover{border-color:var(--line)}
+.tb.on{background:var(--acc-soft);border-color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 22px;
+  margin-bottom:16px;box-shadow:var(--sh)}
+.card .no{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+  font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.card .q{font-size:16.5px;color:var(--ink);line-height:1.45}
+.card .ask{font-size:14px;color:var(--faint);margin-top:8px}
+.card .how{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);font-size:15px}
+.card .how b{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:5px}
+.card .ans{margin-top:10px;font-size:14px}
+.card .ans span{color:var(--ink);font-weight:700}
+.sum{background:var(--sand);border-radius:9px;padding:18px 20px;font-size:15px;margin-top:8px}
+.sum p+p{margin-top:9px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a class="back" href="./">← к подбору программ</a>
+<header style="border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px">
+  <div class="kick">Знакомство, а не тест</div>
+  <h1 style="margin-top:10px">Посмотреть, как это решается</h1>
+  <p class="lede">По пять настоящих базовых заданий из каждого предмета — с разбором,
+  как они решаются. Никто ничего не проверяет и не ставит оценок. Задача одна:
+  полистать и почувствовать, что понятнее и что хочется разбирать дальше.</p>
+  <div class="tabs" id="tabs"></div>
+</header>
+<main id="out"></main>
+<footer class="foot">Задания упрощены и переписаны своими словами по образцам открытого банка
+ФИПИ — это не настоящие варианты экзамена, а показ того, как выглядит работа.
+Русский язык не включён: его сдают все, выбирать тут нечего.</footer>
+</div>
+<script src="demo.js?v=1"></script>
+<script>
+const NAMES = {"биология":"Биология","география":"География","физика":"Физика","химия":"Химия",
+ "математика":"Математика","информатика":"Информатика","обществознание":"Обществознание",
+ "история":"История","литература":"Литература","иностранный":"Иностранный"};
+const ORDER = ["география","биология","обществознание","история","химия","физика",
+               "математика","информатика","литература","иностранный"];
+let cur = "биология";
+try { const s = localStorage.getItem("demo-subj"); if (s && DEMO[s]) cur = s; } catch (e) {}
+
+function render() {
+  document.getElementById("tabs").innerHTML = ORDER
+    .map(k => `<button class="tb${k === cur ? " on" : ""}" data-k="${k}">${NAMES[k]}</button>`).join("");
+  const list = DEMO[cur];
+  document.getElementById("out").innerHTML =
+    list.map((d, i) => `<div class="card">
+      <div class="no"><span>Задание ${i + 1} из ${list.length} · ${NAMES[cur]}</span>
+      <span>${d.k}</span></div>
+      <div class="q">${d.t}</div>
+      <div class="ask">Что надо сделать: ${d.ask}</div>
+      <div class="how"><b>Как это решается</b>${d.how}</div>
+      <div class="ans">Ответ: <span>${d.ans}</span></div>
+    </div>`).join("") +
+    `<div class="sum">
+      <p><b>Если почти всё показалось понятным</b> — предмет скорее подойдёт: базовые задания
+      в экзамене примерно такого уровня, дальше идёт то же самое, но с вариациями.</p>
+      <p><b>Если непонятно даже после разбора</b> — это не приговор, но честный сигнал:
+      с нуля за восемь месяцев такой предмет будет стоить заметно дороже.</p>
+      <p>Полистайте несколько предметов подряд и сравните ощущения. Выбирать стоит не то,
+      что «престижнее», а то, где хочется разобраться, как устроено.</p>
+    </div>`;
+  document.querySelectorAll(".tb").forEach(b => b.onclick = () => {
+    cur = b.dataset.k;
+    try { localStorage.setItem("demo-subj", cur); } catch (e) {}
+    render(); window.scrollTo({top: 0, behavior: "smooth"});
+  });
+}
+render();
+</script>
+</body>
+</html>
