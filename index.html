@@ -344,7 +344,7 @@ const fb = v => v == null ? "—" : v.toFixed(2).replace(".", ",");
 
 function spoPick(sc) {
   const w = p => spoTags(p).reduce((s, t) => s + (sc[t] || 0), 0);
-  return SPO.filter(p => p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
+  return SPO.filter(p => KOL_CITIES.includes(p.c) && p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
     .map(p => ({...p, w: w(p), g: spoGrade(p)}))
     .sort((a, b) => b.w - a.w || a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
 }
@@ -413,9 +413,11 @@ const KOLSLUG = {"ВПТ": "volzhskiy-politekhnicheskiy-tekhnikum", "ВЭК": "v
 const PKU = "https://www.postupashkin.ru/colleges/";
 const PKQ = "https://www.postupashkin.ru/colleges?q=";
 const kolLink = k => KOLSLUG[k] ? PKU + KOLSLUG[k] : PKQ + encodeURIComponent(KOL[k].full);
-const CITY_ORDER = {"Волжский": 0, "Краснослободск": 1, "Светлый Яр": 2, "Волгоград": 3, "Дубовка": 4};
+/* Показываем только эти города, Волжский первым. Чтобы вернуть область — допиши сюда. */
+const KOL_CITIES = ["Волжский", "Волгоград"];
+const CITY_ORDER = {"Волжский": 0, "Волгоград": 1};
 function attPick(ball9, ball11) {
-  return SPO.filter(p => p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
+  return SPO.filter(p => KOL_CITIES.includes(p.c) && p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
     .map(p => ({...p, g: attGrade(p, ball9, ball11)}))
     .sort((a, b) => a.g[0] - b.g[0] || b.g[2] - a.g[2] || (b.p || 0) - (a.p || 0));
 }
