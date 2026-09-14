@@ -166,17 +166,21 @@ function render() {
         const i = SUBJ_INFO[k];
         if (!d || !st) return "";
         const vcls = d.v === "реально" ? "t0" : (d.v === "нереально" ? "t2" : (d.v === "тяжело" ? "t2" : "t1"));
-        return `<div class="sub-card">
+        return `<div class="sub-card lv">
           <div class="hd"><h3>${i.n}</h3><span class="tag ${vcls}">${d.v}</span></div>
-          <p class="plus">${d.t}</p>
-          <div class="n60"><b>До 60 баллов · ${st.n} заданий · ${st.h} ч</b><p>${d.p}</p></div>
-          <div class="n60 lvl70"><b>Чтобы добить до 70 · ${st.n70 - st.n
-            ? "+" + (st.n70 - st.n) + " заданий · +" + (st.h70 - st.h) + " ч"
-            : "тех же заданий хватает"}</b><p>${d.p70}</p></div>
-          <p class="n60m">${d.m}</p>
-          <div class="meta">Всего на 70: ${st.n70} заданий · ${st.p70} первичных из ${st.pmax} ·
+          <div class="lvrow">
+            <div class="lvl"><b>до 60</b><span>${st.n} заданий · ${st.h} ч</span></div>
+            <p>${d.a}</p>
+          </div>
+          <div class="lvrow add">
+            <div class="lvl"><b>до 70</b><span>${st.n70 - st.n
+              ? "+" + (st.n70 - st.n) + " заданий · +" + (st.h70 - st.h) + " ч"
+              : "то же самое"}</span></div>
+            <p>${st.n70 - st.n ? "+ " : ""}${d.b}</p>
+          </div>
+          <div class="meta">На 70 суммарно ${st.p70} первичных из ${st.pmax} ·
             <b style="color:var(--ink)">${st.h70} ч</b> с нуля ·
-            это ${fq((st.h70 / WEEKS).toFixed(1))} ч в неделю до конца мая</div>
+            ${fq((st.h70 / WEEKS).toFixed(1))} ч в неделю до конца мая</div>
         </div>`;
       }).join("")}
     </section>
