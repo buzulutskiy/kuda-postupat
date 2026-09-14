@@ -95,16 +95,18 @@ function tasksBlock(nab) {
           ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, задачи с развёрнутым решением можно не трогать.`
           : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
     const body = t.list
-      ? `<div class="tasks">${t.list.map(([n, name, b, lvl]) => {
+      ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol]) => {
           const on = nb && nb.keep.has(n);
           return `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
-            <span class="tn">${n}</span><span class="tt">${name}</span>
+            <span class="tn">${n}</span>
+            <span class="tt">${name}<span class="tw">${ty} · знаний ${vol}</span></span>
             <span class="tl">${lvl === "Б" ? "базовый" : (lvl === "П" ? "повышенный" : "высокий")}</span>
             <span class="tb">${b}</span>${on ? `<span class="tm">нужно</span>` : ""}</div>`;
         }).join("")}</div>`
-      : `<div class="tasks">${t.blocks.map(([num, what, ball]) =>
+      : `<div class="tasks">${t.blocks.map(([num, what, ball, ty, vol]) =>
           `<div class="tk blk"><span class="tn">${num.replace("Задания ", "").replace("Задание ", "")}</span>
-           <span class="tt">${what}</span><span class="tb2">${ball}</span></div>`).join("")}</div>`;
+           <span class="tt">${what}<span class="tw">${ty} · знаний ${vol}</span></span>
+           <span class="tb2">${ball}</span></div>`).join("")}</div>`;
     return `<div class="sub-card">${head}${body}
       <div class="meta">Источник структуры: ${t.src}</div></div>`;
   }).join("");
