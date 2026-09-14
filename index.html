@@ -172,7 +172,16 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .kmark.kn{background:rgba(138,99,16,.12);color:var(--mid)}
 .kmark.kb{background:rgba(140,58,46,.12);color:var(--bad)}
 .tophead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
-.tnote{font-size:13px;color:var(--faint);margin:8px 0 4px;max-width:64ch}
+.tnote{font-size:13px;color:var(--faint);margin:12px 0 6px;max-width:64ch}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.chip{background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:6px 11px;
+  font-size:13px;color:var(--body);transition:.12s}
+.chip:hover{border-color:var(--line)}
+.chip.on{background:var(--acc-soft);border-color:var(--acc);color:var(--ink);font-weight:700}
+.srokhead{display:flex;align-items:baseline;gap:10px;margin:22px 0 6px;padding-top:12px;
+  border-top:1px solid var(--line)}
+.srokhead b{font-family:Vollkorn,Georgia,serif;font-size:20px;color:var(--ink)}
+.srokhead span{font-size:13px;color:var(--acc);font-weight:700}
 @media (max-width:560px){.spec{flex-direction:column;gap:6px}.sr{text-align:left;align-items:flex-start}}
 .skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
   text-decoration:underline;text-underline-offset:3px}
@@ -788,44 +797,52 @@ function repBadge(k) {
   return `<span class="kmark ${cls}" title="${esc(r.t)}">${lab}</span>`;
 }
 
-let showShort = false;
-function attByTema(rows) {
-  const groups = new Map();
-  rows.filter(p => showShort || srokM(p) > 22).forEach(p => {
-    const t = temaOf(p);
-    if (!groups.has(t)) groups.set(t, []);
-    groups.get(t).push(p);
-  });
-  const order = TEMY.map(x => x[0]).filter(t => groups.has(t));
-  return order.map(t => {
-    const list = groups.get(t).sort((a, b) =>
-      (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
-      srokM(b) - srokM(a) || a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
-    const sub = (TEMY.find(x => x[0] === t) || [])[2] || "";
-    const places = list.reduce((s, p) => s + (p.p || 0), 0);
-    const vzh = list.filter(p => p.c === "Волжский").length;
-    return `<section class="tema">
-      <div class="thead">
-        <div><h3>${t}</h3>${sub ? `<span>${sub}</span>` : ""}</div>
-        <div class="tnum">${list.length} спец. · ${places} мест${vzh ? ` · ${vzh} в Волжском` : ""}</div>
+let temaF = null;   // выбранная отрасль, null = все
+
+function attFlat(rows) {
+  const all = rows.filter(p => srokM(p) > 22);
+  const counts = new Map();
+  all.forEach(p => counts.set(temaOf(p), (counts.get(temaOf(p)) || 0) + 1));
+  const chips = TEMY.map(x => x[0]).filter(t => counts.has(t));
+  const list = (temaF ? all.filter(p => temaOf(p) === temaF) : all)
+    .sort((a, b) => srokM(b) - srokM(a) ||
+                    (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
+                    a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
+  const places = list.reduce((s, p) => s + (p.p || 0), 0);
+
+  const bar = `<div class="chips">
+    <button class="chip${temaF ? "" : " on"}" data-t="">Все · ${all.length}</button>
+    ${chips.map(t => `<button class="chip${temaF === t ? " on" : ""}" data-t="${esc(t)}">${t} · ${counts.get(t)}</button>`).join("")}
+  </div>`;
+
+  let lastSrok = null;
+  const items = list.map(p => {
+    const m = srokM(p);
+    let head = "";
+    if (m !== lastSrok) {
+      lastSrok = m;
+      const s = srokInfo(p);
+      head = `<div class="srokhead"><b>${s.t.replace(" (обычно)", "")}</b><span>${s.till}</span></div>`;
+    }
+    return head + `<div class="spec ${p.c === "Волжский" ? "near" : ""}">
+      <div class="sl">
+        <b>${esc(p.n)}</b>
+        <span>${esc(KOL[p.k].full)} · ${esc(p.c)}${p.c === "Волжский" ? " · рядом" : ""}${
+          p.q != null ? " · конкурс " + (p.q < 1 ? "недобор" : fq(p.q)) : ""} · ${temaOf(p).toLowerCase()}</span>
+        ${KOLREP[p.k] ? `<i>${esc(KOLREP[p.k].t)}</i>` : ""}
       </div>
-      ${list.map(p => `<div class="spec ${p.c === "Волжский" ? "near" : ""}">
-        <div class="sl">
-          <b>${esc(p.n)}</b>
-          <span>${esc(KOL[p.k].full)} · ${esc(p.c)}${p.c === "Волжский" ? " · рядом" : ""}${
-            p.q != null ? " · конкурс " + (p.q < 1 ? "недобор" : fq(p.q)) : ""}</span>
-          ${KOLREP[p.k] ? `<i>${esc(KOLREP[p.k].t)}</i>` : ""}
-        </div>
-        <div class="sr">
-          ${repBadge(p.k)}
-          <span class="tag t${Math.min(2, p.g[0])}">${p.g[1]}</span>
-          <span class="sm">${p.b} кл. · ${p.p == null ? "мест —" : p.p + " мест"} · аттестат ${fb(p.a)}</span>
-          <span class="sm srok${srokM(p) >= 42 ? " best" : ""}">учиться ${srokInfo(p).t}${
-            srokInfo(p).till ? " · " + srokInfo(p).till : ""}</span>
-        </div>
-      </div>`).join("")}
-    </section>`;
+      <div class="sr">
+        ${repBadge(p.k)}
+        <span class="tag t${Math.min(2, p.g[0])}">${p.g[1]}</span>
+        <span class="sm">${p.b} кл. · ${p.p == null ? "мест —" : p.p + " мест"} · аттестат ${fb(p.a)}</span>
+        ${srokInfo(p).t.includes("обычно") ? `<span class="sm">срок не публикуют</span>` : ""}
+      </div>
+    </div>`;
   }).join("");
+
+  return bar + `<p class="tnote">${list.length} специальностей · ${places} мест${
+    temaF ? ` · отрасль «${temaF}»` : ""}. Сверху те, где учиться дольше — значит и отсрочка длиннее.
+    Программы короче двух лет не показываем: отсрочка по ним кончается летом 2029.</p>` + items;
 }
 
 function renderAtt(app) {
@@ -872,15 +889,8 @@ function renderAtt(app) {
       Рособрнадзора.</p>
     </div>
     <section class="set alt" style="padding:0">
-      <div class="tophead">
-        <div class="kick">По темам · сначала Волжский, внутри — где дольше учиться</div>
-        <button id="shortT" class="skip">${showShort
-          ? "скрыть короткие программы" : "показать и короткие (до 1 г 10 м)"}</button>
-      </div>
-      <p class="tnote">Короткие программы — на год и десять месяцев — по умолчанию скрыты:
-      отсрочка по ним кончается летом 2029 года. Самые выгодные по отсрочке отмечены
-      зелёным: три года и десять месяцев прикрывают до лета 2031.</p>
-      ${attByTema(ok)}
+      <div class="kick" style="margin-bottom:10px">Сортировка по сроку обучения · фильтр по отрасли</div>
+      ${attFlat(ok)}
     </section>
     <div class="why">
       <h3>Как читать пометки у колледжей</h3>
@@ -897,8 +907,11 @@ function renderAtt(app) {
     </div>` : ""}
   </div>`;
 
-  const st = document.getElementById("shortT");
-  if (st) st.onclick = () => { showShort = !showShort; render(); };
+  document.querySelectorAll(".chip").forEach(b => b.onclick = () => {
+    temaF = b.dataset.t || null; render();
+    const s = document.querySelector(".chips");
+    if (s) window.scrollTo({top: s.getBoundingClientRect().top + window.scrollY - 12, behavior: "smooth"});
+  });
   const upd = (k, el) => { att[k] = el.value; saveAtt(); };
   const a9 = document.getElementById("a9"), a11 = document.getElementById("a11");
   let t;
