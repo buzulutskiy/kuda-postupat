@@ -174,7 +174,7 @@ function render() {
           <p class="n60m">${d.m}</p>
           <div class="meta">${st.n} заданий · ${st.p} первичных из ${i.pmax} ·
             <b style="color:var(--ink)">${st.h} ч</b> подготовки с нуля ·
-            это ${fq(st.h / WEEKS)} ч в неделю до конца мая</div>
+            это ${fq((st.h / WEEKS).toFixed(1))} ч в неделю до конца мая</div>
         </div>`;
       }).join("")}
     </section>
