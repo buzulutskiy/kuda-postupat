@@ -891,7 +891,7 @@ function renderAtt(app) {
   const places = pass.reduce((s, p) => s + (p.p || 0), 0);
   const inV = pass.filter(p => p.c === "Волжский");
   const vPlaces = inV.reduce((s, p) => s + (p.p || 0), 0);
-  const ok = rows.filter(p => p.g[0] <= 1);
+  const ok = rows;   // показываем все программы, непроходные уходят вниз отдельным блоком
 
   app.innerHTML = `<div class="res">
     <div>
