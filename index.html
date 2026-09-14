@@ -380,7 +380,7 @@ function attGrade(p, ball9, ball11) {
     if (d >= 0.3) return [0, "проходит, +" + fb(d), d];
     if (d >= 0) return [1, "впритык, +" + fb(d), d];
     if (d >= -0.15) return [2, "почти, −" + fb(-d), d];
-    return [3, "не хватает " + fb(-d), d];
+    return [3, "не проходит: не хватает " + fb(-d), d];
   }
   if (p.q != null && p.q < 1) return [0, "брали всех", 1];
   if (p.q != null && p.q < 2) return [1, "шанс высокий", 0.5];
@@ -824,7 +824,8 @@ function attFlat(rows) {
                         (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
                         a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0);
   const sel = temaF ? all.filter(p => temaOf(p) === temaF) : all;
-  const list = sel.filter(p => !bad(p)).sort(srt);
+  const list = sel.filter(p => !bad(p) && p.g[0] < 3).sort(srt);
+  const low = sel.filter(p => !bad(p) && p.g[0] === 3).sort(srt);
   const risky = sel.filter(bad).sort(srt);
   const places = list.reduce((s, p) => s + (p.p || 0), 0);
 
@@ -862,6 +863,13 @@ function attFlat(rows) {
     return head + specCard(p);
   }).join("");
 
+  const lowBlock = low.length ? `<div class="riskyhead">
+      <b>Балла аттестата не хватает · ${low.length}</b>
+      <span>Здесь прошлогодний проходной балл выше, чем у Марка. Подавать документы всё равно
+      можно: конкурс каждый год свой, и если сильные абитуриенты не принесут оригиналы,
+      балл опустится. Но рассчитывать на эти программы как на основной вариант не стоит.</span>
+    </div><div class="riskylist">${low.map(specCard).join("")}</div>` : "";
+
   const riskyBlock = risky.length ? `<div class="riskyhead">
       <b>С плохими отзывами · ${risky.length}</b>
       <span>Сюда собраны колледжи, где заметен негативный фон: низкие оценки в картах,
@@ -869,10 +877,10 @@ function attFlat(rows) {
       Поступать можно, но сначала прочитать отзывы самому.</span>
     </div><div class="riskylist">${risky.map(specCard).join("")}</div>` : "";
 
-  return bar + `<p class="tnote">${list.length} специальностей · ${places} мест${
+  return bar + `<p class="tnote">${list.length} специальностей с шансом · ${places} мест${
     temaF ? ` · отрасль «${temaF}»` : ""}. Сверху те, где учиться дольше — значит и отсрочка длиннее.
     Программы короче двух лет не показываем: отсрочка по ним кончается летом 2029.</p>`
-    + items + riskyBlock;
+    + items + lowBlock + riskyBlock;
 }
 
 function renderAtt(app) {
