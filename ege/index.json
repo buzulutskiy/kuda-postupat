@@ -1,38 +1,128 @@
 {
- "биология": [
-  "bi-3-1.png",
-  "bi-3-2.png",
-  "bi-4-1.png",
-  "bi-4-2.png"
- ],
- "физика": [
-  "fi-3-1.png",
-  "fi-3-2.png",
-  "fi-4-1.png",
-  "fi-4-2.png"
- ],
- "география": [
-  "gg-3-1.png",
-  "gg-3-2.png",
-  "gg-4-1.png",
-  "gg-4-2.png"
- ],
- "математика": [
-  "ma-3-1.png",
-  "ma-3-2.png",
-  "ma-4-1.png",
-  "ma-4-2.png"
- ],
- "химия": [
-  "hi-3-1.png",
-  "hi-3-2.png",
-  "hi-4-1.png",
-  "hi-4-2.png"
- ],
- "обществознание": [
-  "ob-2-1.png",
-  "ob-2-2.png",
-  "ob-3-1.png",
-  "ob-3-2.png"
- ]
+ "биология": {
+  "pages": [
+   "bi-2-1.jpg",
+   "bi-2-2.jpg",
+   "bi-3-1.jpg",
+   "bi-3-2.jpg",
+   "bi-4-1.jpg",
+   "bi-4-2.jpg",
+   "bi-5-1.jpg",
+   "bi-5-2.jpg",
+   "bi-6-1.jpg",
+   "bi-6-2.jpg",
+   "bi-7-1.jpg",
+   "bi-7-2.jpg",
+   "bi-8-1.jpg",
+   "bi-8-2.jpg",
+   "bi-9-1.jpg",
+   "bi-9-2.jpg"
+  ],
+  "answers": [
+   "bia-13-1.jpg",
+   "bia-13-2.jpg"
+  ]
+ },
+ "физика": {
+  "pages": [
+   "fi-2-1.jpg",
+   "fi-2-2.jpg",
+   "fi-3-1.jpg",
+   "fi-3-2.jpg",
+   "fi-4-1.jpg",
+   "fi-4-2.jpg",
+   "fi-5-1.jpg",
+   "fi-5-2.jpg",
+   "fi-6-1.jpg",
+   "fi-6-2.jpg",
+   "fi-7-1.jpg",
+   "fi-7-2.jpg"
+  ],
+  "answers": [
+   "fia-9-1.jpg",
+   "fia-9-2.jpg"
+  ]
+ },
+ "география": {
+  "pages": [
+   "gg-2-1.jpg",
+   "gg-2-2.jpg",
+   "gg-3-1.jpg",
+   "gg-3-2.jpg",
+   "gg-4-1.jpg",
+   "gg-4-2.jpg",
+   "gg-5-1.jpg",
+   "gg-5-2.jpg",
+   "gg-6-1.jpg",
+   "gg-6-2.jpg",
+   "gg-7-1.jpg",
+   "gg-7-2.jpg",
+   "gg-8-1.jpg",
+   "gg-8-2.jpg",
+   "gg-9-1.jpg",
+   "gg-9-2.jpg"
+  ],
+  "answers": [
+   "gga-10-1.jpg",
+   "gga-10-2.jpg"
+  ]
+ },
+ "математика": {
+  "pages": [
+   "ma-2-1.jpg",
+   "ma-2-2.jpg",
+   "ma-3-1.jpg",
+   "ma-3-2.jpg",
+   "ma-4-1.jpg",
+   "ma-4-2.jpg",
+   "ma-5-1.jpg",
+   "ma-5-2.jpg",
+   "ma-6-1.jpg",
+   "ma-6-2.jpg"
+  ],
+  "answers": [
+   "maa-8-1.jpg",
+   "maa-8-2.jpg"
+  ]
+ },
+ "химия": {
+  "pages": [
+   "hi-2-1.jpg",
+   "hi-2-2.jpg",
+   "hi-3-1.jpg",
+   "hi-3-2.jpg",
+   "hi-4-1.jpg",
+   "hi-4-2.jpg",
+   "hi-5-1.jpg",
+   "hi-5-2.jpg",
+   "hi-6-1.jpg",
+   "hi-6-2.jpg",
+   "hi-7-1.jpg",
+   "hi-7-2.jpg",
+   "hi-8-1.jpg",
+   "hi-8-2.jpg"
+  ],
+  "answers": [
+   "hia-12-1.jpg",
+   "hia-12-2.jpg"
+  ]
+ },
+ "обществознание": {
+  "pages": [
+   "ob-2-1.jpg",
+   "ob-2-2.jpg",
+   "ob-3-1.jpg",
+   "ob-3-2.jpg",
+   "ob-4-1.jpg",
+   "ob-4-2.jpg",
+   "ob-5-1.jpg",
+   "ob-5-2.jpg",
+   "ob-6-1.jpg",
+   "ob-6-2.jpg"
+  ],
+  "answers": [
+   "oba-9-1.jpg",
+   "oba-9-2.jpg"
+  ]
+ }
 }

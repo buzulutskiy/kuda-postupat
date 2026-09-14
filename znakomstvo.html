@@ -162,39 +162,30 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .card .how{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);font-size:15px}
 .card .how b{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--faint);margin-bottom:5px}
-.sheets{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:18px 0 8px}
-.sheets figure{margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;
+.sheet{margin:0 0 30px;border-top:1px solid var(--line);padding-top:22px}
+.sheet:first-of-type{border-top:none;padding-top:0}
+.sheet .plabel{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;margin-bottom:10px}
+.sheet figure{margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;
   background:#fff;box-shadow:var(--sh)}
-.sheets img{width:100%;height:auto;display:block}
-.src{font-size:12.5px;color:var(--faint);margin:0 0 22px}
-.card .also{margin-top:12px;padding-top:12px;border-top:1px solid var(--line2);font-size:14px}
-.card .also b{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--faint);margin-bottom:5px}
-.ege-tbl{margin:14px 0;overflow-x:auto}
-.ege-tbl table{border-collapse:collapse;font-size:14.5px;min-width:min(100%,320px)}
-.ege-tbl th,.ege-tbl td{border:1px solid var(--line);padding:7px 12px;text-align:left}
-.ege-tbl th{background:var(--sand);font-weight:700;font-size:13px;color:var(--ink)}
-.ege-match{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;font-size:14.5px}
-.ege-match .mr{padding:5px 0;border-bottom:1px solid var(--line2)}
-.ege-match .mr b{display:inline-block;width:20px;color:var(--faint)}
-.ege-ch{margin:14px 0;padding-left:26px;font-size:15px}
-.ege-ch li{padding:3px 0}
-.ege-ch.lettered{list-style:none;padding-left:0;counter-reset:l}
-.ege-ch.lettered li::before{counter-increment:l;
-  content:counter(l,upper-alpha) ") ";color:var(--faint);font-weight:700;margin-right:4px}
-.ege-f{margin:14px 0;font-family:"PT Sans";font-size:17px;color:var(--ink);
-  background:var(--sand);border-radius:7px;padding:12px 16px;line-height:1.9}
-.ege-q{margin:14px 0;padding:12px 16px;border-left:3px solid var(--line);
-  font-style:italic;font-size:15.5px;color:var(--ink)}
-.ege-fig{margin:14px 0;color:var(--ink);max-width:320px}
-.ege-fig svg{width:100%;height:auto;display:block}
-.ege-lines{margin:14px 0;display:grid;gap:11px}
-.ege-lines span{display:block;height:1px;background:var(--line)}
-.ege-lines.code{background:var(--sand);border-radius:7px;padding:14px 16px;gap:13px}
-.ege-ans{display:flex;align-items:center;gap:7px;margin-top:12px;font-size:13.5px;color:var(--faint)}
-.ege-ans i{display:block;width:26px;height:30px;border:1px solid var(--line);border-radius:3px;
-  font-style:normal;text-align:center;line-height:30px;color:var(--faint);font-size:12px}
-.ege-ans i em{font-style:normal}
+.sheet img{width:100%;height:auto;display:block}
+.under{margin-top:14px;display:grid;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:16px 18px;margin:0;box-shadow:none}
+.card .no{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  font-weight:700;margin-bottom:6px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.card .th{font-family:Vollkorn,Georgia,serif;font-size:18px;color:var(--ink);line-height:1.25}
+.card .how{margin-top:10px;font-size:15px}
+.card dl{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line2);
+  display:grid;grid-template-columns:minmax(96px,auto) 1fr;gap:6px 14px;font-size:14px}
+.card dt{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);
+  font-weight:700;padding-top:2px}
+.card dd{margin:0;color:var(--body)}
+@media (max-width:520px){.card dl{grid-template-columns:1fr;gap:2px 0}
+  .card dd{margin-bottom:8px}}
+.src{font-size:12.5px;color:var(--faint);margin:0 0 26px}
+.nb{background:var(--sand);border-radius:9px;padding:14px 16px;font-size:14px;margin:0}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 24px}
 .sum{background:var(--sand);border-radius:9px;padding:18px 20px;font-size:15px;margin-top:8px}
 .sum p+p{margin-top:9px}
 </style>
@@ -205,63 +196,89 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 <header style="border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px">
   <div class="kick">Знакомство, а не тест</div>
   <h1 style="margin-top:10px">Посмотреть, как это решается</h1>
-  <p class="lede">Настоящие страницы демонстрационных вариантов ЕГЭ 2027 года — как они выглядят
-  на экзамене, со всеми рисунками и таблицами. Под ними разбор: как решается и что ещё может
-  стоять за этим же номером в другом варианте. Никто ничего не проверяет — полистайте
-  и почувствуйте, что понятнее.</p>
+  <p class="lede">Настоящие страницы демоверсий ЕГЭ 2027 года — целиком, со всеми рисунками
+  и таблицами, в том же порядке, что на экзамене. Под каждой страницей — разбор заданий,
+  которые на ней стоят: как решается, что для этого нужно знать, в каком виде писать ответ
+  и насколько это тяжело, если начинать с нуля.</p>
   <div class="tabs" id="tabs"></div>
 </header>
 <main id="out"></main>
-<footer class="foot">Формулировки заданий приведены дословно по демонстрационным вариантам
-ЕГЭ 2027 года (проект), опубликованным ФИПИ. Рисунки, графики и таблицы из оригинала здесь
-не воспроизводятся — их можно посмотреть в самой демоверсии по ссылке в конце каждого раздела.
-© Федеральная служба по надзору в сфере образования и науки. Русский язык не включён:
-его сдают все, выбирать тут нечего.</footer>
+<footer class="foot">Страницы взяты целиком из демонстрационных вариантов ЕГЭ 2027 года
+(проект), опубликованных ФИПИ на doc.fipi.ru, и ничем не изменены.
+© Федеральная служба по надзору в сфере образования и науки. Разбор под страницами написан
+для этого сайта. Русский язык не включён: его сдают все, выбирать тут нечего.</footer>
 </div>
-<script src="demo.js?v=4"></script>
+<script src="demo.js?v=6"></script>
 <script>
 const NAMES = {"биология":"Биология","география":"География","физика":"Физика","химия":"Химия",
- "математика":"Математика","информатика":"Информатика","обществознание":"Обществознание",
- "история":"История","литература":"Литература","иностранный":"Иностранный"};
+ "математика":"Математика","обществознание":"Обществознание"};
 const ORDER = ["география","биология","обществознание","химия","физика","математика"];
-let cur = "биология";
-try { const s = localStorage.getItem("demo-subj"); if (s && DEMO[s]) cur = s; } catch (e) {}
+const DCLASS = {"совсем просто":"t0","просто":"t0","надо выучить":"t1","средне":"t1",
+ "тяжело":"t2","очень тяжело":"t2"};
+let cur = "география";
+try { const s = localStorage.getItem("demo-subj"); if (s && PAGES[s]) cur = s; } catch (e) {}
+
+function card(n, d) {
+  return `<div class="card">
+    <div class="no"><span>Задание ${n}</span>
+      <span class="tag ${DCLASS[d.d] || "t1"}">${d.d}</span></div>
+    <div class="th">${d.t}</div>
+    <div class="how">${d.h}</div>
+    <dl>
+      <dt>Что знать</dt><dd>${d.z}</dd>
+      <dt>Формат ответа</dt><dd>${d.f}</dd>
+    </dl>
+  </div>`;
+}
 
 function render() {
   document.getElementById("tabs").innerHTML = ORDER
     .map(k => `<button class="tb${k === cur ? " on" : ""}" data-k="${k}">${NAMES[k]}</button>`).join("");
-  const list = DEMO[cur];
+  const pages = PAGES[cur] || [], on = ONPAGE[cur] || {}, note = PNOTE[cur] || {}, R = RESH[cur] || {};
+  const total = new Set(Object.values(on).flat()).size;
+
+  const sheets = pages.map((f, i) => {
+    const nums = on[f] || [];
+    const cards = nums.map(n => R[String(n)] ? card(n, R[String(n)]) : "").join("");
+    const label = nums.length
+      ? `Страница ${i + 1} · ${nums.length > 1 ? "задания" : "задание"} ${nums.join(", ")}`
+      : `Страница ${i + 1}${note[f] ? " · " + note[f] : ""}`;
+    const empty = nums.length ? "" :
+      `<p class="nb">На этой странице заданий нет: ${note[f] || "продолжение предыдущего задания"}.</p>`;
+    return `<section class="sheet">
+      <div class="plabel">${label}</div>
+      <figure><img src="ege/${f}" alt="Страница демонстрационного варианта ЕГЭ 2027 по предмету ${NAMES[cur]}" loading="lazy"></figure>
+      <div class="under">${cards || empty}</div>
+    </section>`;
+  }).join("");
+
+  const answers = (ANSW[cur] || []).map(f =>
+    `<figure style="margin:0 0 14px"><img src="ege/${f}" alt="Ответы к демонстрационному варианту" loading="lazy"></figure>`).join("");
+
   document.getElementById("out").innerHTML =
-    `<div class="sheets">${(PAGES[cur] || []).map(f =>
-        `<figure><img src="ege/${f}" alt="Страница демонстрационного варианта ЕГЭ по предмету ${NAMES[cur]}" loading="lazy"></figure>`).join("")}
-     </div>
-     <p class="src">Страницы демонстрационного варианта ЕГЭ 2027 года (проект), ФИПИ.
-     © Федеральная служба по надзору в сфере образования и науки.</p>` +
-    list.map(d => `<div class="card">
-      <div class="no"><span>Разбор задания ${d.n}</span><span>${d.k}</span></div>
-      <div class="q">${d.q}</div>
-      <div class="ask">Что надо сделать: ${d.ask}</div>
-      <div class="how"><b>Как это решается</b>${d.how}</div>
-      <div class="also"><b>Но это только один пример</b>${d.also}</div>
-    </div>`).join("") +
-    `<div class="sum" style="margin-bottom:18px">
-      <p><b>Почему «только один пример».</b> Вот что пишет сам ФИПИ в демоверсии:
-      «В демонстрационном варианте представлены конкретные примеры заданий,
-      не исчерпывающие всего многообразия возможных формулировок заданий на каждой позиции
-      варианта экзаменационной работы».</p>
-      <p>То есть за номером 1 в разных вариантах стоят разные задания — со своими темами
-      и формулами. Увидев одно, нельзя решить, что вся позиция такая.</p>
+    `<p class="src">Ниже — первая часть демонстрационного варианта ЕГЭ 2027 года по предмету
+     «${NAMES[cur].toLowerCase()}» страница за страницей, ровно так, как она напечатана в КИМе.
+     Всего заданий в первой части: ${total}. Под каждой страницей — разбор тех заданий, которые
+     на ней стоят. © Федеральная служба по надзору в сфере образования и науки (ФИПИ).</p>`
+    + sheets
+    + `<section class="sheet"><div class="plabel">Ответы к первой части</div>${answers}</section>`
+    + `<div class="sum">
+      <p><b>Важно.</b> ФИПИ пишет в самой демоверсии: «В демонстрационном варианте представлены
+      конкретные примеры заданий, не исчерпывающие всего многообразия возможных формулировок
+      заданий на каждой позиции варианта». То есть за одним и тем же номером в разных вариантах
+      стоят разные задачи — иногда из разных тем. Там, где это особенно заметно (математика,
+      физика), в разборе про это сказано отдельно.</p>
       <p><a href="${FIPI}${DEMOFILE[cur] || ""}">Скачать демоверсию ${NAMES[cur].toLowerCase()} 2027 с сайта ФИПИ</a>
-      — там весь вариант целиком, с рисунками и критериями.</p>
-    </div>` +
-    `<div class="sum">
-      <p><b>Если почти всё показалось понятным</b> — предмет скорее подойдёт: базовые задания
-      в экзамене примерно такого уровня, дальше идёт то же самое, но с вариациями.</p>
-      <p><b>Если непонятно даже после разбора</b> — это не приговор, но честный сигнал:
-      с нуля за восемь месяцев такой предмет будет стоить заметно дороже.</p>
-      <p>Полистайте несколько предметов подряд и сравните ощущения. Выбирать стоит не то,
-      что «престижнее», а то, где хочется разобраться, как устроено.</p>
+      — весь вариант целиком, вместе со второй частью, критериями и спецификацией.</p>
+    </div>`
+    + `<div class="sum">
+      <p><b>Если почти всё понятно с первого взгляда</b> — предмет скорее подойдёт.</p>
+      <p><b>Если непонятно даже после разбора</b> — это не приговор, но честный сигнал: с нуля
+      за восемь месяцев такой предмет обойдётся заметно дороже по времени.</p>
+      <p>Пролистайте несколько предметов подряд и сравните ощущение. Оценка сложности в углу
+      каждой карточки — для человека, который начинает с нуля.</p>
     </div>`;
+
   document.querySelectorAll(".tb").forEach(b => b.onclick = () => {
     cur = b.dataset.k;
     try { localStorage.setItem("demo-subj", cur); } catch (e) {}
