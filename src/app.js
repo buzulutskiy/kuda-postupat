@@ -169,8 +169,7 @@ function render() {
         return `<div class="sub-card">
           <div class="hd"><h3>${i.n}</h3><span class="tag ${vcls}">${d.v}</span></div>
           <p class="plus">${d.t}</p>
-          <div class="n60"><b>Что придётся выучить</b>
-            <ul>${d.u.map(x => `<li>${x}</li>`).join("")}</ul></div>
+          <div class="n60"><b>Что придётся выучить</b><p>${d.p}</p></div>
           <p class="n60m">${d.m}</p>
           <div class="meta">${st.n} заданий · ${st.p} первичных из ${i.pmax} ·
             <b style="color:var(--ink)">${st.h} ч</b> подготовки с нуля ·
