@@ -153,15 +153,16 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .thead h3{font-size:19px;display:inline}
 .thead span{font-size:13px;color:var(--faint);margin-left:9px}
 .tnum{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
-.spec{display:flex;justify-content:space-between;gap:16px;padding:13px 14px;
+.spec{display:grid;grid-template-columns:1fr auto;gap:6px 20px;padding:13px 15px;
   border:1px solid var(--line);border-radius:9px;background:var(--card);margin-bottom:8px;
-  flex-wrap:wrap}
+  align-items:start}
+.spec .sl{min-width:0}
 .spec.near{background:var(--acc-soft);border-color:var(--acc)}
 .sl b{display:block;color:var(--ink);font-size:15.5px;font-weight:400}
 .sl span{display:block;font-size:12.5px;color:var(--faint);margin-top:2px}
 .sl i{display:block;font-style:normal;font-size:12px;color:var(--faint);margin-top:4px;
   max-width:56ch;opacity:.85}
-.sr{text-align:right;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.sr{text-align:right;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:4px;justify-self:end}
 .sr .sm{font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
 .sr .srok{color:var(--faint)}
 .sr .srok.best{color:var(--acc);font-weight:700}
@@ -180,9 +181,13 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .chip:hover{border-color:var(--line)}
 .chip.on{background:var(--acc-soft);border-color:var(--acc);color:var(--ink);font-weight:700}
 .srokhead{display:flex;align-items:baseline;gap:10px;margin:26px 0 10px}
+.riskyhead{margin:34px 0 12px;padding-top:18px;border-top:2px solid var(--line)}
+.riskyhead b{display:block;font-family:Vollkorn,Georgia,serif;font-size:20px;color:var(--bad)}
+.riskyhead span{display:block;font-size:13px;color:var(--faint);margin-top:6px;max-width:64ch}
+.riskylist{opacity:.72}
 .srokhead b{font-family:Vollkorn,Georgia,serif;font-size:20px;color:var(--ink)}
 .srokhead span{font-size:13px;color:var(--acc);font-weight:700}
-@media (max-width:560px){.spec{flex-direction:column;gap:6px}.sr{text-align:left;align-items:flex-start}}
+@media (max-width:560px){.spec{grid-template-columns:1fr}.sr{text-align:left;align-items:flex-start;justify-self:start}}
 .skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
   text-decoration:underline;text-underline-offset:3px}
 </style>
@@ -804,10 +809,13 @@ function attFlat(rows) {
   const counts = new Map();
   all.forEach(p => counts.set(temaOf(p), (counts.get(temaOf(p)) || 0) + 1));
   const chips = TEMY.map(x => x[0]).filter(t => counts.has(t));
-  const list = (temaF ? all.filter(p => temaOf(p) === temaF) : all)
-    .sort((a, b) => srokM(b) - srokM(a) ||
-                    (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
-                    a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
+  const bad = p => (KOLREP[p.k] || {}).r < 0;
+  const srt = (a, b) => srokM(b) - srokM(a) ||
+                        (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
+                        a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0);
+  const sel = temaF ? all.filter(p => temaOf(p) === temaF) : all;
+  const list = sel.filter(p => !bad(p)).sort(srt);
+  const risky = sel.filter(bad).sort(srt);
   const places = list.reduce((s, p) => s + (p.p || 0), 0);
 
   const bar = `<div class="chips">
@@ -815,16 +823,7 @@ function attFlat(rows) {
     ${chips.map(t => `<button class="chip${temaF === t ? " on" : ""}" data-t="${esc(t)}">${t} · ${counts.get(t)}</button>`).join("")}
   </div>`;
 
-  let lastSrok = null;
-  const items = list.map(p => {
-    const m = srokM(p);
-    let head = "";
-    if (m !== lastSrok) {
-      lastSrok = m;
-      const s = srokInfo(p);
-      head = `<div class="srokhead"><b>${s.t.replace(" (обычно)", "")}</b><span>${s.till}</span></div>`;
-    }
-    return head + `<div class="spec ${p.c === "Волжский" ? "near" : ""}">
+  const specCard = p => `<div class="spec ${p.c === "Волжский" ? "near" : ""}">
       <div class="sl">
         <b>${esc(p.n)}</b>
         <span>${esc(KOL[p.k].full)} · ${esc(p.c)}${p.c === "Волжский" ? " · рядом" : ""}${
@@ -838,11 +837,30 @@ function attFlat(rows) {
         ${srokInfo(p).t.includes("обычно") ? `<span class="sm">срок не публикуют</span>` : ""}
       </div>
     </div>`;
+
+  let lastSrok = null;
+  const items = list.map(p => {
+    const m = srokM(p);
+    let head = "";
+    if (m !== lastSrok) {
+      lastSrok = m;
+      const s = srokInfo(p);
+      head = `<div class="srokhead"><b>${s.t.replace(" (обычно)", "")}</b><span>${s.till}</span></div>`;
+    }
+    return head + specCard(p);
   }).join("");
+
+  const riskyBlock = risky.length ? `<div class="riskyhead">
+      <b>С плохими отзывами · ${risky.length}</b>
+      <span>Сюда собраны колледжи, где заметен негативный фон: низкие оценки в картах,
+      жалобы на администрацию или проблемы с аккредитацией отдельных программ.
+      Поступать можно, но сначала прочитать отзывы самому.</span>
+    </div><div class="riskylist">${risky.map(specCard).join("")}</div>` : "";
 
   return bar + `<p class="tnote">${list.length} специальностей · ${places} мест${
     temaF ? ` · отрасль «${temaF}»` : ""}. Сверху те, где учиться дольше — значит и отсрочка длиннее.
-    Программы короче двух лет не показываем: отсрочка по ним кончается летом 2029.</p>` + items;
+    Программы короче двух лет не показываем: отсрочка по ним кончается летом 2029.</p>`
+    + items + riskyBlock;
 }
 
 function renderAtt(app) {
