@@ -435,7 +435,7 @@ const esc = s => String(s).replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&
 const nm = k => SUBJ[k];
 let showAll = false, tab = "ege";
 let manual = null;   // Set выбранных предметов; null — режим не открыт
-let screen = new URLSearchParams(location.search).get("tab") === "att" ? "att" : "quiz";  // quiz | subj | att
+let screen = new URLSearchParams(location.search).get("tab") === "quiz" ? "quiz" : "att";  // quiz | subj | att
 let att = {b9: "", b11: ""};
 try { const a = JSON.parse(localStorage.getItem(KEY + "-att") || "{}");
       if (a && typeof a === "object") att = {b9: a.b9 || "", b11: a.b11 || ""}; } catch (e) {}
@@ -490,12 +490,9 @@ function render() {
   const bar = document.getElementById("bar"), app = document.getElementById("app");
   const mode = document.getElementById("mode");
   mode.innerHTML =
-    `<button id="mQ" class="${screen === "quiz" ? "on" : ""}">Тест</button>` +
     `<a class="tb-l" href="vzvesit.html">Предметы ЕГЭ</a>` +
     `<button id="mA" class="${screen === "att" ? "on" : ""}">Аттестат</button>` +
-    `<a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>` +
-    `<a class="tb-l" href="varianty.html">Варианты</a>`;
-  mode.querySelector("#mQ").onclick = () => { screen = "quiz"; manual = null; render(); };
+    `<a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>`;
   mode.querySelector("#mA").onclick = () => { screen = "att"; render(); };
   bar.hidden = screen !== "quiz";
   bar.innerHTML = Q.map((_, i) =>
