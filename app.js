@@ -66,6 +66,18 @@ function verdict(rows) {
                 `до конца мая: ${how}. Всего ${good.hours} часов подготовки с нуля.`};
 }
 
+// сложность отдельного задания: масштаб предмета × формат × объём × уровень × тип работы
+function taskK(subjKey, b, lvl, ty, vol, fmt) {
+  const base = SUBJ_INFO[subjKey].K;
+  const f = /выбрать/.test(fmt) ? 0.7
+          : (/написать|сочинение|программу|решение с|развёрнут|аргумент|сопоставл|план|объяснение/.test(fmt) ? 1.45 : 1.0);
+  const v = vol === "мало" ? 0.8 : (vol === "много" ? 1.25 : 1.0);
+  const l = lvl === "Б" ? 1.0 : (lvl === "П" ? 1.15 : 1.4);
+  const t = /теория|заучивание|правила/.test(ty) ? 0.9
+          : (/программирование|сочинение|аргумент/.test(ty) ? 1.3 : 1.15);
+  return Math.max(0.5, Math.min(10, +(base * f * v * l * t).toFixed(1)));
+}
+
 // какие задания нужно закрыть на 60 тестовых
 function nabor60(t) {
   if (!t.list) return null;
@@ -87,23 +99,29 @@ function tasksBlock(nab) {
     const t = TASKS[k], i = SUBJ_INFO[k];
     if (!t) return "";
     const nb = nabor60(t);
+    const need = nb ? t.list.filter(r => nb.keep.has(r[0])) : [];
+    const avg = need.length
+      ? +(need.reduce((s, r) => s + taskK(k, r[2], r[3], r[4], r[5], r[6]), 0) / need.length).toFixed(1)
+      : null;
     const head = `<div class="hd"><h3>${i.n}</h3>
       <span class="tag ${i.K <= 2.5 ? "t0" : (i.K <= 6 ? "t1" : "t2")}">${t.total} заданий</span></div>
       <p class="plus">На 60 баллов нужно ${t.p60} первичных из ${t.pmax}${
-        nb ? `, это ${nb.keep.size} заданий из ${t.total}` : ""}. ${
+        nb ? `, это ${nb.keep.size} заданий из ${t.total}${avg ? `, их средняя сложность ${fk(avg)}` : ""}` : ""}. ${
         t.p60 <= t.pb1
-          ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, задачи с развёрнутым решением можно не трогать.`
+          ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, развёрнутые задачи можно не трогать.`
           : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
     const body = t.list
       ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol, fmt]) => {
           const on = nb && nb.keep.has(n);
           const self = /написать|сочинение|программу|решение|развёрнут|объяснить|аргумент|сопоставл|разобрать|план/.test(fmt)
             ? "hard" : (/выбрать/.test(fmt) ? "easy" : "mid");
-          return `<div class="tk ${self}${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
+          const tk = taskK(k, b, lvl, ty, vol, fmt);
+          const w = Math.round(tk / 10 * 100);
+          return `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
             <span class="tn">${n}</span>
-            <span class="tt">${name}<span class="tw">${fmt} · ${ty} · знаний ${vol}</span></span>
-            <span class="tl">${lvl === "Б" ? "базовый" : (lvl === "П" ? "повышенный" : "высокий")}</span>
-            <span class="tb">${b}</span>${on ? `<span class="tm">нужно</span>` : ""}</div>`;
+            <span class="tt">${name}<span class="tw">${fmt}</span></span>
+            <span class="tks"><i style="width:${w}%" class="${self}"></i><b>${fk(tk)}</b></span>
+            <span class="tb">${b}</span></div>`;
         }).join("")}</div>`
       : `<div class="tasks">${t.blocks.map(([num, what, ball, ty, vol]) =>
           `<div class="tk blk"><span class="tn">${num.replace("Задания ", "").replace("Задание ", "")}</span>
@@ -178,9 +196,10 @@ function render() {
       <p class="lede" style="font-size:15.5px">Что именно спрашивают, что надо сделать руками
       и сколько заданий нужно закрыть на 60 баллов. Отмеченные — минимальный набор.</p>
       <div class="legend">
-        <span><i class="sq easy"></i>выбрать из вариантов — можно угадать</span>
-        <span><i class="sq mid"></i>решить самому и вписать ответ</span>
-        <span><i class="sq hard"></i>написать самому: решение, объяснение, сочинение</span>
+        <span><i class="sq easy"></i>выбрать из вариантов</span>
+        <span><i class="sq mid"></i>решить и вписать ответ</span>
+        <span><i class="sq hard"></i>написать самому</span>
+        <span>Полоска и число справа — сложность задания от 1 до 10</span>
       </div>
       ${tasksBlock(nab)}
     </section>
