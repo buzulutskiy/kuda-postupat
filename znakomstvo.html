@@ -162,12 +162,25 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .card .how{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2);font-size:15px}
 .card .how b{display:block;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--faint);margin-bottom:5px}
+.sheetimg{margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
+.sheetimg img{width:100%;height:auto;display:block}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px}
+.pager.bot{margin:16px 0 0}
+.pbtn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 16px;
+  font-size:14.5px;color:var(--ink);font-weight:700;white-space:nowrap;transition:.12s}
+.pbtn:hover:not([disabled]){border-color:var(--acc);background:var(--acc-soft)}
+.pbtn[disabled]{opacity:.32;cursor:not-allowed}
+.pinfo{text-align:center;line-height:1.25}
+.pinfo b{display:block;font-size:13.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.pinfo span{display:block;font-size:12px;color:var(--faint);margin-top:2px}
+@media (max-width:520px){.pbtn{padding:9px 12px;font-size:13.5px}.pinfo b{font-size:12.5px}}
 .sheet{margin:0 0 38px}
 .sheet .plabel{font-size:11px;letter-spacing:.11em;text-transform:uppercase;
   color:var(--faint);font-weight:700;margin-bottom:9px}
 .sheet figure{margin:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff}
 .sheet img{width:100%;height:auto;display:block}
 .under{margin-top:14px;display:grid;gap:10px}
+#viewer{margin-bottom:26px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:9px;
   padding:15px 17px;margin:0;box-shadow:none}
 .card.must{border-left:4px solid var(--acc);padding-left:13px;background:var(--acc-soft)}
@@ -290,52 +303,7 @@ function card(n, d) {
   </div>`;
 }
 
-function render() {
-  document.getElementById("tabs").innerHTML = ORDER
-    .map(k => `<button class="tb${k === cur ? " on" : ""}" data-k="${k}">${NAMES[k]}</button>`).join("");
-  const pages = PAGES[cur] || [], on = ONPAGE[cur] || {}, role = PROLE[cur] || {}, R = RESH[cur] || {};
-  const all = Object.keys(R).length;
-  const must = Object.values(R).filter(d => d.m);
-  const mp = must.reduce((a, d) => a + d.p, 0);
-
-  const sheets = pages.map((f, i) => {
-    const nums = on[f] || [];
-    const cards = nums.map(n => R[String(n)] ? card(n, R[String(n)]) : "").join("");
-    const rl = role[f] || "";
-    const label = nums.length
-      ? `Страница ${i + 1} · ${nums.length > 1 ? "задания" : "задание"} ${nums.join(", ")}`
-      : `Страница ${i + 1}${rl ? " · " + rl : ""}`;
-    const empty = nums.length ? "" :
-      `<p class="nb">Заданий на этой странице нет: ${rl || "продолжение предыдущего"}.</p>`;
-    return `<section class="sheet">
-      <div class="plabel">${label}</div>
-      <figure><img src="ege/${f}" alt="Страница демонстрационного варианта ЕГЭ 2027 по предмету ${NAMES[cur]}" loading="lazy"></figure>
-      <div class="under">${cards || empty}</div>
-    </section>`;
-  }).join("");
-
-  document.getElementById("out").innerHTML =
-    `<section class="intro">
-       <div class="kick">Зачем это учить</div>
-       <h2>${INTRO[cur].l}</h2>
-       <p>${INTRO[cur].p}</p>
-       <div class="skills"><b>Сдать этот экзамен — значит научиться:</b>
-         <ul>${INTRO[cur].u.map(x => `<li>${x}</li>`).join("")}</ul></div>
-     </section>
-     <div class="sum" style="margin:0 0 22px">
-      <p><b>${NAMES[cur]}: ${all} заданий, максимум ${PMAX[cur]} первичных баллов.</b>
-      Чтобы выйти примерно на 60–70 тестовых, нужно около ${P60[cur]} первичных.
-      Такой набор набирается, если уверенно закрыть ${must.length} заданий, отмеченных ниже
-      зелёной полосой, — они дают ${mp} первичных. Остальные можно решать, если останутся силы,
-      но без них 60–70 всё равно достижимы.</p>
-     </div>
-     <p class="src">Ниже — сам вариант ЕГЭ 2027 года, страница за страницей: от первого задания
-     до последнего, обе части. Инструкции, справочные листы и ответы убраны.
-     Под каждой страницей — разбор стоящих на ней заданий.
-     © Федеральная служба по надзору в сфере образования и науки (ФИПИ).</p>`
-    + sheets
-    + (() => {
-        const T = Object.values(R);
+function analysisBlock(T, mustT, mustP) {
         const KINDS = ["выбрать из вариантов", "вписать число", "вписать слово", "расписать самому"];
         const KTXT = {
           "выбрать из вариантов": "ответ выбирается из готового списка: варианты, соответствия, последовательности",
@@ -344,8 +312,8 @@ function render() {
           "расписать самому": "надо изложить решение или текст, который читает эксперт"
         };
         const tot = T.reduce((a, d) => a + d.p, 0);
-        const mustT = T.filter(d => d.m);
-        const mustP = mustT.reduce((a, d) => a + d.p, 0);
+        
+        
         const rows = KINDS.map(k => {
           const g = T.filter(d => d.k === k);
           if (!g.length) return "";
@@ -397,16 +365,82 @@ function render() {
             : `Выбором из списка в наборе закрывается только ${pick} баллов из ${mustP} — остальное
                придётся считать или расписывать самому.`}</p>
         </div>`;
-      })()
-    + `<div class="sum">
-      <p><b>Важно.</b> ФИПИ пишет в самой демоверсии: «В демонстрационном варианте представлены
-      конкретные примеры заданий, не исчерпывающие всего многообразия возможных формулировок
-      заданий на каждой позиции варианта». За одним и тем же номером в разных вариантах стоят
-      разные задачи — иногда из разных тем.</p>
-      <p><a href="${FIPI}${DEMOFILE[cur] || ""}">Скачать демоверсию ${NAMES[cur].toLowerCase()} 2027 с сайта ФИПИ</a>
-      — вариант, спецификация и кодификатор.</p>
-    </div>`;
+      }
 
+let pg = 0;
+function pageKey() { return "demo-pg-" + cur; }
+function loadPg() { try { pg = +(localStorage.getItem(pageKey()) || 0); } catch (e) { pg = 0; } }
+function savePg() { try { localStorage.setItem(pageKey(), pg); } catch (e) {} }
+
+function nav(pages, on, pos) {
+  const f = pages[pg], nums = on[f] || [];
+  const what = nums.length ? (nums.length > 1 ? "задания " : "задание ") + nums.join(", ") : "без заданий";
+  return `<div class="pager ${pos}">
+    <button class="pbtn" id="prev${pos}" ${pg === 0 ? "disabled" : ""}>← Назад</button>
+    <div class="pinfo"><b>Страница ${pg + 1} из ${pages.length}</b><span>${what}</span></div>
+    <button class="pbtn" id="next${pos}" ${pg >= pages.length - 1 ? "disabled" : ""}>Вперёд →</button>
+  </div>`;
+}
+
+function renderPage() {
+  const pages = PAGES[cur] || [], on = ONPAGE[cur] || {}, role = PROLE[cur] || {}, R = RESH[cur] || {};
+  if (pg >= pages.length) pg = pages.length - 1;
+  if (pg < 0) pg = 0;
+  const f = pages[pg], nums = on[f] || [];
+  const cards = nums.map(n => R[String(n)] ? card(n, R[String(n)]) : "").join("");
+  const empty = nums.length ? "" :
+    `<p class="nb">Заданий на этой странице нет: ${role[f] || "продолжение предыдущего"}.</p>`;
+  document.getElementById("viewer").innerHTML =
+    nav(pages, on, "top") +
+    `<figure class="sheetimg"><img src="ege/${f}" alt="Страница демонстрационного варианта ЕГЭ 2027, ${NAMES[cur]}"></figure>
+     <div class="under">${cards || empty}</div>` +
+    nav(pages, on, "bot");
+  ["top", "bot"].forEach(p => {
+    const pv = document.getElementById("prev" + p), nx = document.getElementById("next" + p);
+    if (pv) pv.onclick = () => { pg--; savePg(); renderPage(); scrollTop(); };
+    if (nx) nx.onclick = () => { pg++; savePg(); renderPage(); scrollTop(); };
+  });
+  // предзагрузка соседних страниц
+  [pg + 1, pg - 1].forEach(k => { if (pages[k]) new Image().src = "ege/" + pages[k]; });
+}
+function scrollTop() {
+  const v = document.getElementById("viewer");
+  if (v) window.scrollTo({top: v.offsetTop - 12, behavior: "smooth"});
+}
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+  if (e.key === "ArrowLeft") { const b = document.getElementById("prevtop"); if (b && !b.disabled) b.click(); }
+  if (e.key === "ArrowRight") { const b = document.getElementById("nexttop"); if (b && !b.disabled) b.click(); }
+});
+
+function render() {
+  document.getElementById("tabs").innerHTML = ORDER
+    .map(k => `<button class="tb${k === cur ? " on" : ""}" data-k="${k}">${NAMES[k]}</button>`).join("");
+  const R = RESH[cur] || {};
+  const all = Object.keys(R).length;
+  const must = Object.values(R).filter(d => d.m);
+  const mp = must.reduce((a, d) => a + d.p, 0);
+  const T = Object.values(R);
+
+  document.getElementById("out").innerHTML =
+    `<section class="intro">
+       <div class="kick">Зачем это учить</div>
+       <h2>${INTRO[cur].l}</h2>
+       <p>${INTRO[cur].p}</p>
+       <div class="skills"><b>Сдать этот экзамен — значит научиться:</b>
+         <ul>${INTRO[cur].u.map(x => `<li>${x}</li>`).join("")}</ul></div>
+     </section>
+     <div class="sum" style="margin:0 0 20px">
+      <p><b>${NAMES[cur]}: ${all} заданий, максимум ${PMAX[cur]} первичных баллов.</b>
+      Чтобы выйти примерно на 60–70 тестовых, нужно около ${P60[cur]} первичных — это
+      ${must.length} заданий, отмеченных зелёным, они дают ${mp} первичных.</p>
+     </div>
+     <p class="src">Листай страницы кнопками или стрелками на клавиатуре. Под каждой страницей —
+     разбор заданий, которые на ней стоят. Это настоящий вариант ЕГЭ 2027 года, ФИПИ.</p>
+     <div id="viewer"></div>`
+    + analysisBlock(T, must, mp);
+
+  loadPg(); renderPage();
   document.querySelectorAll(".tb").forEach(b => b.onclick = () => {
     cur = b.dataset.k;
     try { localStorage.setItem("demo-subj", cur); } catch (e) {}
