@@ -11,14 +11,7 @@ const fk = v => (Number.isInteger(v) ? v + ",0" : String(v).replace(".", ","));
 const passBall = p => p.s26 || p.s;
 const openPl = p => p.o == null ? p.p : p.o;
 
-const PRESETS = [
-  ["Биология + география", ["биология", "география"]],
-  ["Биология + химия", ["биология", "химия"]],
-  ["Математика + физика", ["математика", "физика"]],
-  ["Математика + информатика", ["математика", "информатика"]],
-  ["Математика + география", ["математика", "география"]],
-  ["Обществознание + история", ["обществознание", "история"]],
-];
+
 
 function fits(p, nab) {
   if (p.o === 0 || !passBall(p)) return false;
@@ -67,6 +60,13 @@ function verdict(rows) {
 }
 
 // сложность отдельного задания: масштаб предмета × формат × объём × уровень × тип работы
+const KWORD = k =>
+  k < 1.5 ? "совсем просто" :
+  k < 2.5 ? "просто" :
+  k < 4   ? "надо выучить" :
+  k < 6   ? "средне" :
+  k < 8   ? "тяжело" : "очень тяжело";
+
 function taskK(subjKey, b, lvl, ty, vol, fmt) {
   const base = SUBJ_INFO[subjKey].K;
   const f = /выбрать/.test(fmt) ? 0.7
@@ -106,7 +106,7 @@ function tasksBlock(nab) {
     const head = `<div class="hd"><h3>${i.n}</h3>
       <span class="tag ${i.K <= 2.5 ? "t0" : (i.K <= 6 ? "t1" : "t2")}">${t.total} заданий</span></div>
       <p class="plus">На 60 баллов нужно ${t.p60} первичных из ${t.pmax}${
-        nb ? `, это ${nb.keep.size} заданий из ${t.total}${avg ? `, их средняя сложность ${fk(avg)}` : ""}` : ""}. ${
+        nb ? `, это ${nb.keep.size} заданий из ${t.total}${avg ? `, в среднем «${KWORD(avg)}»` : ""}` : ""}. ${
         t.p60 <= t.pb1
           ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, развёрнутые задачи можно не трогать.`
           : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
@@ -120,7 +120,7 @@ function tasksBlock(nab) {
           return `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
             <span class="tn">${n}</span>
             <span class="tt">${name}<span class="tw">${fmt}</span></span>
-            <span class="tks"><i style="width:${w}%" class="${self}"></i><b>${fk(tk)}</b></span>
+            <span class="tks"><i style="width:${w}%" class="${self}"></i><b>${KWORD(tk)}</b></span>
             <span class="tb">${b}</span></div>`;
         }).join("")}</div>`
       : `<div class="tasks">${t.blocks.map(([num, what, ball, ty, vol]) =>
@@ -139,11 +139,6 @@ function render() {
   const rows = plan(nab);
   const v = nab.length ? verdict(rows) : null;
   const K = +(nab.reduce((s, k) => s + SUBJ_INFO[k].K, 0) + SUBJ_INFO["русский"].K).toFixed(1);
-
-  document.getElementById("presets").innerHTML = PRESETS.map(([name, list]) => {
-    const on = list.length === sel.size && list.every(x => sel.has(x));
-    return `<button class="qp${on ? " on" : ""}" data-p="${list.join(",")}">${name}</button>`;
-  }).join("");
 
   document.getElementById("picker").innerHTML = Object.keys(SUBJ_INFO)
     .filter(k => k !== "русский")
@@ -199,7 +194,7 @@ function render() {
         <span><i class="sq easy"></i>выбрать из вариантов</span>
         <span><i class="sq mid"></i>решить и вписать ответ</span>
         <span><i class="sq hard"></i>написать самому</span>
-        <span>Полоска и число справа — сложность задания от 1 до 10</span>
+        <span>Справа — насколько тяжело даётся само задание</span>
       </div>
       ${tasksBlock(nab)}
     </section>
@@ -239,10 +234,6 @@ function render() {
   document.querySelectorAll(".pk").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
     sel.has(k) ? sel.delete(k) : sel.add(k);
-    save(); render();
-  });
-  document.querySelectorAll(".qp").forEach(b => b.onclick = () => {
-    sel = new Set(b.dataset.p.split(","));
     save(); render();
   });
 }
