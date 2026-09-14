@@ -100,21 +100,20 @@ function tasksBlock(nab) {
     const t = TASKS[k], i = SUBJ_INFO[k];
     if (!t) return "";
     const nd = NEED[k];
-    const s60 = new Set(nd ? nd.a : []), s70 = new Set(nd ? nd.b : []);
-    const nb = nd ? {keep: s60} : nabor60(t);
+    const st6 = NA60S[k === "иностранный" ? "английский" : k];
+    const nb = nd ? {keep: new Set([...nd.a, ...nd.b])} : nabor60(t);
     const need = nb ? t.list.filter(r => nb.keep.has(r[0])) : [];
     const avg = need.length
       ? +(need.reduce((s, r) => s + taskK(k, r[2], r[3], r[4], r[5], r[6]), 0) / need.length).toFixed(1)
       : null;
     const head = `<div class="hd"><h3>${i.n}</h3>
       <span class="tag ${i.K <= 2.5 ? "t0" : (i.K <= 6 ? "t1" : "t2")}">${t.total} заданий</span></div>
-      <p class="plus">На 60 баллов нужно ${t.p60} первичных из ${t.pmax}${
-        nb ? `, это ${nb.keep.size} заданий из ${t.total}${avg ? `, в среднем «${KWORD(avg)}»` : ""}` : ""}. ${
-        t.p60 <= t.pb1
+      <p class="plus">Зелёным отмечен набор на 60–70 баллов: ${nb.keep.size} заданий из ${t.total}${
+        avg ? `, в среднем «${KWORD(avg)}»` : ""} — это ${st6 ? st6.p70 : t.p60} первичных из ${t.pmax}. ${
+        (st6 ? st6.p70 : t.p60) <= t.pb1
           ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, развёрнутые задачи можно не трогать.`
-          : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}
-      ${nd && nd.b.length ? `<br><span class="mk70b">Охрой отмечено то, что добавляется до 70 баллов:
-        ${nd.b.length} ${nd.b.length === 1 ? "задание" : "заданий"} — №${nd.b.join(", №")}.</span>` : ""}</p>`;
+          : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${(st6 ? st6.p70 : t.p60) - t.pb1} из второй части.`}
+      Остальное можно пропустить.</p>`;
     const body = t.list
       ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol, fmt], idx) => {
           const on = nb && nb.keep.has(n);
@@ -127,8 +126,7 @@ function tasksBlock(nab) {
             ? "hard" : (/выбрать/.test(fmt) ? "easy" : "mid");
           const tk = taskK(k, b, lvl, ty, vol, fmt);
           const w = Math.round(tk / 10 * 100);
-          const on70 = s70.has(n);
-          return div + `<div class="tk${on ? " on" : (on70 ? " on70" : "")}${n > t.part1 ? " second" : ""}">
+          return div + `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
             <span class="tn">${n}</span>
             <span class="tt">${name}<span class="tw">${fmt}</span></span>
             <span class="tks"><i style="width:${w}%" class="${self}"></i><b>${KWORD(tk)}</b></span>
@@ -169,8 +167,7 @@ function render() {
       <p class="lede" style="font-size:15.5px">Номера заданий — из демонстрационного варианта
       ФИПИ 2027 года, их можно открыть и посмотреть на странице
       <a href="znakomstvo.html" style="color:var(--acc)">«Знакомство с ЕГЭ»</a>.
-      По каждому предмету: какие задания нужны на 60 баллов
-      и что добавляется, чтобы выйти на 70. Часы — подготовка с нуля до конца мая. Для сравнения:
+      По каждому предмету — что нужно выучить, чтобы выйти на 60–70 баллов. Часы — подготовка с нуля до конца мая. Для сравнения:
       при трёх часах в неделю с сентября выходит около 110 часов на предмет. Оценок «легко» или
       «сложно» здесь нет намеренно: часы и объём видны, а что из этого по силам и интересно —
       решать самому.</p>
@@ -180,21 +177,14 @@ function render() {
         const i = SUBJ_INFO[k];
         if (!d || !st) return "";
         return `<div class="sub-card lv">
-          <div class="hd"><h3>${i.n}</h3><span class="hrs">${st.h70} ч с нуля до 70</span></div>
+          <div class="hd"><h3>${i.n}</h3><span class="hrs">${st.h70} ч с нуля</span></div>
           <div class="lvrow">
-            <div class="lvl"><b>до 60</b><span>${st.n} заданий · ${st.h} ч</span></div>
-            <div><p>${d.a}</p>
-              ${d.a2 ? `<p class="ch2"><i>вторая часть, развёрнутый ответ:</i> ${d.a2}</p>` : ""}</div>
+            <div class="lvl"><b>на 60–70</b><span>${st.n70} заданий · ${st.h70} ч</span></div>
+            <div><p>${[d.a, d.b].filter(Boolean).join(" ")}</p>
+              ${d.a2 || d.b2 ? `<p class="ch2"><i>вторая часть, развёрнутый ответ:</i> ${
+                [d.a2, d.b2].filter(Boolean).join(" ")}</p>` : ""}</div>
           </div>
-          <div class="lvrow add">
-            <div class="lvl"><b>до 70</b><span>${st.n70 - st.n
-              ? "+" + (st.n70 - st.n) + " заданий · +" + (st.h70 - st.h) + " ч"
-              : "то же самое"}</span></div>
-            <div>${d.b ? `<p>${d.b}</p>` : ""}
-              ${d.b2 ? `<p class="ch2"><i>вторая часть, развёрнутый ответ:</i> ${d.b2}</p>` : ""}
-              ${!d.b && !d.b2 ? `<p>новых заданий нет — тот же набор, но без ошибок</p>` : ""}</div>
-          </div>
-          <div class="meta">На 70 суммарно ${st.p70} первичных из ${st.pmax} ·
+          <div class="meta">Итого ${st.p70} первичных из ${st.pmax} ·
             <b style="color:var(--ink)">${st.h70} ч</b> с нуля ·
             ${fq((st.h70 / WEEKS).toFixed(1))} ч в неделю до конца мая</div>
         </div>`;
@@ -204,10 +194,9 @@ function render() {
     <section>
       <h2>Объём: все задания экзамена</h2>
       <p class="lede" style="font-size:15.5px">Что именно спрашивают, что надо сделать руками
-      и сколько заданий нужно закрыть на 60 баллов. Отмеченные — минимальный набор.</p>
+      и какие задания нужно закрыть, чтобы выйти на 60–70 баллов.</p>
       <div class="legend">
-        <span><i class="row g"></i>нужно на 60 баллов</span>
-        <span><i class="row o"></i>добавляется до 70</span>
+        <span><i class="row g"></i>нужно на 60–70 баллов</span>
         <span>без заливки — можно пропустить</span>
       </div>
       <div class="legend" style="margin-top:6px">

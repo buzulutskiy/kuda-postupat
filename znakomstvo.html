@@ -289,13 +289,11 @@ let cur = "география";
 try { const s = localStorage.getItem("demo-subj"); if (s && PAGES[s]) cur = s; } catch (e) {}
 
 function card(n, d) {
-  return `<div class="card${d.m ? " must" : (d.m70 ? " must70" : "")}">
+  return `<div class="card${d.m || d.m70 ? " must" : ""}">
     <div class="no">
       <span class="lft">Задание ${n}${d.lv ? " · " + d.lv : ""} · ${d.p} ${d.p === 1 ? "балл" : d.p < 5 ? "балла" : "баллов"}</span>
-      <span class="chips">${d.m
-        ? `<span class="chip need">★ нужно для 60</span>`
-        : d.m70
-        ? `<span class="chip need70">нужно для 70</span>`
+      <span class="chips">${d.m || d.m70
+        ? `<span class="chip need">★ нужно для 60–70</span>`
         : `<span class="chip skip">можно пропустить</span>`}<span class="chip kind">${d.k}</span><span class="chip ${DCLASS[d.d] || "t1"}">${d.d}</span></span>
     </div>
     <div class="th">${d.t}</div>
@@ -347,7 +345,7 @@ function analysisBlock(T, mustT, mustP) {
           <div class="scroll"><table>
             <colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup>
             <thead><tr><th>Тип задания</th><th class="r">Заданий</th><th class="r">Баллов</th>
-              <th class="r">Доля</th><th class="r">Из них<span class="cell-sub">в наборе на 60</span></th></tr></thead>
+              <th class="r">Доля</th><th class="r">Из них<span class="cell-sub">в наборе на 60–70</span></th></tr></thead>
             <tbody>${rows}</tbody>
           </table></div>
           <p style="margin-top:14px"><b>Насколько помогает угадывание.</b> Если не знать вообще ничего
@@ -445,16 +443,14 @@ function render() {
      </section>
      <div class="sum" style="margin:0 0 20px">
       <p><b>${NAMES[cur]}: ${all} заданий, максимум ${PMAX[cur]} первичных баллов.</b></p>
-      <p><b class="mk">Зелёным</b> отмечены задания, которых хватает на 60 тестовых:
-      их ${must.length}, они дают ${mp} первичных при нужных ${P60[cur]}.
-      <b class="mk70">Охрой</b> — что добавляется, чтобы выйти на 70: ещё ${m70.length}
-      заданий, всего ${mp70} первичных при нужных ${P70[cur]}.
+      <p><b class="mk">Зелёным</b> отмечены задания, которых хватает на 60–70 тестовых:
+      их ${must.length + m70.length}, они дают ${mp70} первичных при нужных ${P70[cur]}.
       Остальные можно не трогать вовсе.</p>
      </div>
      <p class="src">Листай страницы кнопками или стрелками на клавиатуре. Под каждой страницей —
      разбор заданий, которые на ней стоят. Это настоящий вариант ЕГЭ 2027 года, ФИПИ.</p>
      <div id="viewer"></div>`
-    + analysisBlock(T, must, mp);
+    + analysisBlock(T, Object.values(R).filter(d => d.m || d.m70), mp70);
 
   loadPg(); renderPage();
   document.querySelectorAll(".tb").forEach(b => b.onclick = () => {
