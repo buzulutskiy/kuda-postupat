@@ -223,11 +223,25 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .sub-card .meta{font-size:12.5px;color:var(--faint);margin-top:8px;
   font-variant-numeric:tabular-nums}
 h2{margin-top:28px}
+
+.tog{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden;
+  flex-wrap:wrap}
+.tog .tb-l{display:inline-block;padding:7px 13px;font-size:13.5px;color:var(--faint);
+  text-decoration:none;border-left:1px solid var(--line)}
+.tog .tb-l:first-child{border-left:none}
+.tog .tb-l:hover{background:var(--sand);color:var(--ink)}
+.tog .tb-l.on{background:var(--acc-soft);color:var(--ink);font-weight:700}
+.navbar{margin:0 0 20px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<a class="back" href="./">← к тесту и подбору по аттестату</a>
+<div class="tog navbar">
+  <a class="tb-l" href="./">Тест</a>
+  <a class="tb-l on" href="vzvesit.html">Предметы ЕГЭ</a>
+  <a class="tb-l" href="./?tab=att">Аттестат</a>
+  <a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>
+</div>
 <a class="back" href="znakomstvo.html" style="margin-left:16px">Посмотреть, как решаются задания →</a>
 <header style="border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:24px">
   <div class="kick">Цена каждого набора</div>

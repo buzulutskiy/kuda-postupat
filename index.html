@@ -128,6 +128,11 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .tog{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .tog button{background:transparent;border:none;padding:7px 13px;font-size:13.5px;color:var(--faint)}
 .tog button.on{background:var(--acc-soft);color:var(--ink);font-weight:700}
+.tog .tb-l{display:inline-block;padding:7px 13px;font-size:13.5px;color:var(--faint);
+  text-decoration:none;border-left:1px solid var(--line)}
+.tog .tb-l:hover{background:var(--sand);color:var(--ink)}
+.tog button+button,.tog .tb-l+button{border-left:1px solid var(--line)}
+@media (max-width:560px){.tog{flex-wrap:wrap}}
 .pk{font-family:Vollkorn,Georgia,serif;font-size:17px;font-weight:700;color:var(--ink);
   background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:7px 13px;
   transition:border-color .12s,background .12s}
@@ -152,12 +157,8 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   <h1 style="margin-top:10px">Куда пойти учиться</h1>
   <p class="lede">Двенадцать вопросов о том, что интересно и что терпимо. На выходе — какие
   предметы имеет смысл сдавать и на какие бюджетные программы с этим набором реально попасть.</p>
-  <p style="margin-top:16px;font-size:14.5px">
-    <a href="znakomstvo.html" style="color:var(--acc)">Посмотреть, как решаются задания</a> —
-    по пять штук из каждого предмета с разбором.
-    <a href="vzvesit.html" style="color:var(--acc)">Взвесить набор самому</a> — сложность каждого
-    предмета, подводные камни и все программы, которые он открывает.
-    Отдельно: <a href="bio-geo.html" style="color:var(--acc)">биология и география</a> —
+  <p style="margin-top:16px;font-size:14.5px">Отдельно:
+    <a href="bio-geo.html" style="color:var(--acc)">биология и география</a> —
     дорога без профильной математики.</p>
   <div class="tog" id="mode" style="margin-top:18px"></div>
   <div class="bar" id="bar"></div>
@@ -433,7 +434,7 @@ const esc = s => String(s).replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&
 const nm = k => SUBJ[k];
 let showAll = false, tab = "ege";
 let manual = null;   // Set выбранных предметов; null — режим не открыт
-let screen = "quiz";  // quiz | subj | att
+let screen = new URLSearchParams(location.search).get("tab") === "att" ? "att" : "quiz";  // quiz | subj | att
 let att = {b9: "", b11: ""};
 try { const a = JSON.parse(localStorage.getItem(KEY + "-att") || "{}");
       if (a && typeof a === "object") att = {b9: a.b9 || "", b11: a.b11 || ""}; } catch (e) {}
@@ -489,13 +490,10 @@ function render() {
   const mode = document.getElementById("mode");
   mode.innerHTML =
     `<button id="mQ" class="${screen === "quiz" ? "on" : ""}">Тест</button>` +
-    `<button id="mM" class="${screen === "subj" ? "on" : ""}">Предметы ЕГЭ</button>` +
-    `<button id="mA" class="${screen === "att" ? "on" : ""}">Аттестат</button>`;
+    `<a class="tb-l" href="vzvesit.html">Предметы ЕГЭ</a>` +
+    `<button id="mA" class="${screen === "att" ? "on" : ""}">Аттестат</button>` +
+    `<a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>`;
   mode.querySelector("#mQ").onclick = () => { screen = "quiz"; manual = null; render(); };
-  mode.querySelector("#mM").onclick = () => {
-    screen = "subj";
-    if (!manual) manual = new Set(step >= Q.length ? variants()[0].nab : ["математика", "физика"]);
-    render(); };
   mode.querySelector("#mA").onclick = () => { screen = "att"; render(); };
   bar.hidden = screen !== "quiz";
   bar.innerHTML = Q.map((_, i) =>
