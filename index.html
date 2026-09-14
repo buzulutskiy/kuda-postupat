@@ -163,13 +163,16 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   max-width:56ch;opacity:.85}
 .sr{text-align:right;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .sr .sm{font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
-.sr .srok{color:var(--acc)}
+.sr .srok{color:var(--faint)}
+.sr .srok.best{color:var(--acc);font-weight:700}
 .kmark{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:4px;
   letter-spacing:.03em}
 .kmark.kg{background:var(--acc-soft);color:var(--ok)}
 .kmark.km{background:var(--sand);color:var(--faint)}
 .kmark.kn{background:rgba(138,99,16,.12);color:var(--mid)}
 .kmark.kb{background:rgba(140,58,46,.12);color:var(--bad)}
+.tophead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.tnote{font-size:13px;color:var(--faint);margin:8px 0 4px;max-width:64ch}
 @media (max-width:560px){.spec{flex-direction:column;gap:6px}.sr{text-align:left;align-items:flex-start}}
 .skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
   text-decoration:underline;text-underline-offset:3px}
@@ -751,6 +754,15 @@ function renderManual(app) {
 }
 
 const SROK_M = {"~10 мес": 10, "1 г 10 м": 22, "2 г 10 м": 34, "3 г 6 м": 42, "3 г 10 м": 46};
+function srokM(p) {
+  const t = p.t;
+  if (!t || t === "нет данных") {
+    const g = (p.code || "").split(".")[1];
+    if (g === "01") return p.b === 11 ? 10 : 22;
+    return p.b === 11 ? 34 : 40;
+  }
+  return SROK_M[t] || 34;
+}
 function srokInfo(p) {
   let t = p.t, guess = false;
   if (!t || t === "нет данных") {
@@ -776,9 +788,10 @@ function repBadge(k) {
   return `<span class="kmark ${cls}" title="${esc(r.t)}">${lab}</span>`;
 }
 
+let showShort = false;
 function attByTema(rows) {
   const groups = new Map();
-  rows.forEach(p => {
+  rows.filter(p => showShort || srokM(p) > 22).forEach(p => {
     const t = temaOf(p);
     if (!groups.has(t)) groups.set(t, []);
     groups.get(t).push(p);
@@ -787,7 +800,7 @@ function attByTema(rows) {
   return order.map(t => {
     const list = groups.get(t).sort((a, b) =>
       (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
-      a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
+      srokM(b) - srokM(a) || a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
     const sub = (TEMY.find(x => x[0] === t) || [])[2] || "";
     const places = list.reduce((s, p) => s + (p.p || 0), 0);
     const vzh = list.filter(p => p.c === "Волжский").length;
@@ -807,7 +820,8 @@ function attByTema(rows) {
           ${repBadge(p.k)}
           <span class="tag t${Math.min(2, p.g[0])}">${p.g[1]}</span>
           <span class="sm">${p.b} кл. · ${p.p == null ? "мест —" : p.p + " мест"} · аттестат ${fb(p.a)}</span>
-          <span class="sm srok">учиться ${srokInfo(p).t}${srokInfo(p).till ? " · " + srokInfo(p).till : ""}</span>
+          <span class="sm srok${srokM(p) >= 42 ? " best" : ""}">учиться ${srokInfo(p).t}${
+            srokInfo(p).till ? " · " + srokInfo(p).till : ""}</span>
         </div>
       </div>`).join("")}
     </section>`;
@@ -858,7 +872,14 @@ function renderAtt(app) {
       Рособрнадзора.</p>
     </div>
     <section class="set alt" style="padding:0">
-      <div class="kick" style="margin-bottom:4px">${ok.length} специальностей по темам · сначала Волжский</div>
+      <div class="tophead">
+        <div class="kick">По темам · сначала Волжский, внутри — где дольше учиться</div>
+        <button id="shortT" class="skip">${showShort
+          ? "скрыть короткие программы" : "показать и короткие (до 1 г 10 м)"}</button>
+      </div>
+      <p class="tnote">Короткие программы — на год и десять месяцев — по умолчанию скрыты:
+      отсрочка по ним кончается летом 2029 года. Самые выгодные по отсрочке отмечены
+      зелёным: три года и десять месяцев прикрывают до лета 2031.</p>
       ${attByTema(ok)}
     </section>
     <div class="why">
@@ -876,6 +897,8 @@ function renderAtt(app) {
     </div>` : ""}
   </div>`;
 
+  const st = document.getElementById("shortT");
+  if (st) st.onclick = () => { showShort = !showShort; render(); };
   const upd = (k, el) => { att[k] = el.value; saveAtt(); };
   const a9 = document.getElementById("a9"), a11 = document.getElementById("a11");
   let t;
