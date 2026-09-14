@@ -222,6 +222,8 @@ function render() {
             </summary>
             <div class="pbody">
               ${note}
+              ${VUZSLUG[p.v] ? `<p class="src-line"><a href="${PKV}${VUZSLUG[p.v]}/priem-2026"
+                target="_blank" rel="noopener">Проверить на Поступашкине: приём 2026 в ${esc(p.v)} →</a></p>` : ""}
               ${g ? `<p class="what"><b>${g.t}.</b> ${g.w}</p>
               <div class="pm2">
                 <div><b>Плюсы</b><ul>${g.p.map(x => `<li>${x}</li>`).join("")}</ul></div>
