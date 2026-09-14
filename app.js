@@ -95,11 +95,13 @@ function tasksBlock(nab) {
           ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, задачи с развёрнутым решением можно не трогать.`
           : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
     const body = t.list
-      ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol]) => {
+      ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol, fmt]) => {
           const on = nb && nb.keep.has(n);
-          return `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
+          const self = /написать|сочинение|программу|решение|развёрнут|объяснить|аргумент|сопоставл|разобрать|план/.test(fmt)
+            ? "hard" : (/выбрать/.test(fmt) ? "easy" : "mid");
+          return `<div class="tk ${self}${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
             <span class="tn">${n}</span>
-            <span class="tt">${name}<span class="tw">${ty} · знаний ${vol}</span></span>
+            <span class="tt">${name}<span class="tw">${fmt} · ${ty} · знаний ${vol}</span></span>
             <span class="tl">${lvl === "Б" ? "базовый" : (lvl === "П" ? "повышенный" : "высокий")}</span>
             <span class="tb">${b}</span>${on ? `<span class="tm">нужно</span>` : ""}</div>`;
         }).join("")}</div>`
@@ -173,9 +175,13 @@ function render() {
 
     <section>
       <h2>Объём: все задания экзамена</h2>
-      <p class="lede" style="font-size:15.5px">Что именно спрашивают и сколько заданий нужно закрыть
-      на 60 баллов. Отмеченные — минимальный набор: только первая часть, задачи с развёрнутым
-      решением в него не входят.</p>
+      <p class="lede" style="font-size:15.5px">Что именно спрашивают, что надо сделать руками
+      и сколько заданий нужно закрыть на 60 баллов. Отмеченные — минимальный набор.</p>
+      <div class="legend">
+        <span><i class="sq easy"></i>выбрать из вариантов — можно угадать</span>
+        <span><i class="sq mid"></i>решить самому и вписать ответ</span>
+        <span><i class="sq hard"></i>написать самому: решение, объяснение, сочинение</span>
+      </div>
       ${tasksBlock(nab)}
     </section>
 
