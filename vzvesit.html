@@ -792,8 +792,7 @@ function tasksBlock(nab) {
 function render() {
   const nab = [...sel];
   const ok = PROGS.filter(p => fits(p, nab)).sort((a, b) => passBall(a) - passBall(b));
-  const rows = plan(nab);
-  const v = nab.length ? verdict(rows) : null;
+  const v = nab.length ? verdict(plan(nab)) : null;
   const K = +(nab.reduce((s, k) => s + SUBJ_INFO[k].K, 0) + SUBJ_INFO["русский"].K).toFixed(1);
 
   document.getElementById("picker").innerHTML = Object.keys(SUBJ_INFO)
@@ -808,23 +807,6 @@ function render() {
     <section class="set verdict">
       <span class="tag ${v.cls}">${v.head}</span>
       <p style="margin-top:12px;font-size:16px">${v.text}</p>
-    </section>
-
-    <section>
-      <h2>Три уровня цели</h2>
-      <p class="lede" style="font-size:15.5px">Чем выше целитесь, тем больше часов и тем шире выбор.
-      Часы — подготовка с нуля к концу мая, вместе с русским.</p>
-      <div class="scroll"><table>
-        <colgroup><col><col class="w1"><col class="w2"><col class="w1"><col class="w1"></colgroup>
-        <tr><th>Цель</th><th class="r">Сумма<br>трёх ЕГЭ</th><th class="r">Часов<br>в неделю</th>
-        <th class="r">Программ</th><th class="r">Мест</th></tr>
-        ${rows.map(r => `<tr><td class="nm"><b>${r.name}</b><span>${r.note}</span></td>
-          <td class="r">${r.sum}</td>
-          <td class="r"><b style="color:var(--ink)">${fq(r.week)}</b><span class="cell-sub">${r.hours} ч всего</span></td>
-          <td class="r">${r.n}</td><td class="r">${r.m}</td></tr>`).join("")}
-      </table></div>
-      <p style="font-size:13.5px;color:var(--faint);margin-top:12px">
-      Суммарная сложность набора — ${fk(K)} по десятибалльной шкале, включая русский.</p>
     </section>
 
     <section>
