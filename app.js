@@ -108,7 +108,8 @@ function tasksBlock(nab) {
            <span class="tt">${what}<span class="tw">${ty} · знаний ${vol}</span></span>
            <span class="tb2">${ball}</span></div>`).join("")}</div>`;
     return `<div class="sub-card">${head}${body}
-      <div class="meta">Источник структуры: ${t.src}</div></div>`;
+      <div class="meta">Структура: ${t.src}. Баллы за отдельные задания —
+      по демоверсии 2026; на 2027 год возможны сдвиги в нумерации.</div></div>`;
   }).join("");
 }
 
