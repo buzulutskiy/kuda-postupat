@@ -99,7 +99,9 @@ function tasksBlock(nab) {
   return ["русский", ...nab].map(k => {
     const t = TASKS[k], i = SUBJ_INFO[k];
     if (!t) return "";
-    const nb = nabor60(t);
+    const nd = NEED[k];
+    const s60 = new Set(nd ? nd.a : []), s70 = new Set(nd ? nd.b : []);
+    const nb = nd ? {keep: s60} : nabor60(t);
     const need = nb ? t.list.filter(r => nb.keep.has(r[0])) : [];
     const avg = need.length
       ? +(need.reduce((s, r) => s + taskK(k, r[2], r[3], r[4], r[5], r[6]), 0) / need.length).toFixed(1)
@@ -110,7 +112,9 @@ function tasksBlock(nab) {
         nb ? `, это ${nb.keep.size} заданий из ${t.total}${avg ? `, в среднем «${KWORD(avg)}»` : ""}` : ""}. ${
         t.p60 <= t.pb1
           ? `Всё берётся первой частью: она даёт ${t.pb1} баллов, развёрнутые задачи можно не трогать.`
-          : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}</p>`;
+          : `<b>Первой части не хватит:</b> она даёт ${t.pb1} баллов, нужно добрать ещё ${t.p60 - t.pb1} из второй части.`}
+      ${nd && nd.b.length ? `<br><span class="mk70b">Охрой отмечено то, что добавляется до 70 баллов:
+        ${nd.b.length} ${nd.b.length === 1 ? "задание" : "заданий"} — №${nd.b.join(", №")}.</span>` : ""}</p>`;
     const body = t.list
       ? `<div class="tasks">${t.list.map(([n, name, b, lvl, ty, vol, fmt], idx) => {
           const on = nb && nb.keep.has(n);
@@ -123,7 +127,8 @@ function tasksBlock(nab) {
             ? "hard" : (/выбрать/.test(fmt) ? "easy" : "mid");
           const tk = taskK(k, b, lvl, ty, vol, fmt);
           const w = Math.round(tk / 10 * 100);
-          return div + `<div class="tk${on ? " on" : ""}${n > t.part1 ? " second" : ""}">
+          const on70 = s70.has(n);
+          return div + `<div class="tk${on ? " on" : (on70 ? " on70" : "")}${n > t.part1 ? " second" : ""}">
             <span class="tn">${n}</span>
             <span class="tt">${name}<span class="tw">${fmt}</span></span>
             <span class="tks"><i style="width:${w}%" class="${self}"></i><b>${KWORD(tk)}</b></span>
