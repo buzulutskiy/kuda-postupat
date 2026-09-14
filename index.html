@@ -147,6 +147,29 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;
   font-variant-numeric:tabular-nums}
 .flds input:focus{outline:none;border-color:var(--acc)}
+.tema{border-top:1px solid var(--line);padding:18px 0 4px;margin:0}
+.tema:first-of-type{border-top:none}
+.thead{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap}
+.thead h3{font-size:19px;display:inline}
+.thead span{font-size:13px;color:var(--faint);margin-left:9px}
+.tnum{font-size:12.5px;color:var(--faint);white-space:nowrap;font-variant-numeric:tabular-nums}
+.spec{display:flex;justify-content:space-between;gap:16px;padding:11px 0;
+  border-bottom:1px solid var(--line2);flex-wrap:wrap}
+.spec.near{background:var(--acc-soft);border-radius:8px;padding:11px 13px;margin:4px 0;
+  border-bottom:none}
+.sl b{display:block;color:var(--ink);font-size:15.5px;font-weight:400}
+.sl span{display:block;font-size:12.5px;color:var(--faint);margin-top:2px}
+.sl i{display:block;font-style:normal;font-size:12px;color:var(--faint);margin-top:4px;
+  max-width:56ch;opacity:.85}
+.sr{text-align:right;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.sr .sm{font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.kmark{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:4px;
+  letter-spacing:.03em}
+.kmark.kg{background:var(--acc-soft);color:var(--ok)}
+.kmark.km{background:var(--sand);color:var(--faint)}
+.kmark.kn{background:rgba(138,99,16,.12);color:var(--mid)}
+.kmark.kb{background:rgba(140,58,46,.12);color:var(--bad)}
+@media (max-width:560px){.spec{flex-direction:column;gap:6px}.sr{text-align:left;align-items:flex-start}}
 .skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
   text-decoration:underline;text-underline-offset:3px}
 </style>
@@ -343,6 +366,28 @@ function attGrade(p, ball9, ball11) {
   return [1, "данных нет, шанс есть", 0.4];
 }
 
+const KOLREP = {"ВПТ": {"r": 2, "t": "«Профессионалитет» с 2023, металлургический кластер. Отзывы по корпусам 4,2–5,0."}, "ВКМиС": {"r": 2, "t": "Ядро кластера «Машиностроение» 2025. Работодатели: Волгограднефтемаш, метизный завод, «Стереотек»."}, "ВМК": {"r": 2, "t": "Серебро и бронза «Профессионалов-2026», открытый рейтинг поступающих. С 2026 — медицинский кластер."}, "ВМК-В": {"r": 2, "t": "Волжский филиал медколледжа. Тот же медицинский кластер с 2026 года."}, "ВТК": {"r": 2, "t": "Ядро кластера «Туризм и сфера услуг» 2025, две бронзы чемпионата."}, "ВТВТ": {"r": 1, "t": "Единственный морской профиль в области: судовождение, матрос, мотористы. Аккредитация есть."}, "ВЭК": {"r": 0, "t": "В «Профессионалитет» не входит. Отзывы противоречивы: хвалят теорию и преподавателей, ругают практическую базу."}, "ВТехК": {"r": -1, "t": "Кластер «Транспорт», но заметный негативный фон: перевод со 2 курса в филиалы, жалобы на администрацию."}, "Гагарина": {"r": -1, "t": "Оценка в 2ГИС 1,8 при 80 отзывах — очень низко. Перед подачей прочитать отзывы самому."}, "ВолГУ": {"r": 1, "t": "Колледж при университете — база и преподаватели вузовские."}, "ВолГУ-В": {"r": 1, "t": "Колледж при филиале ВолГУ в Волжском."}, "ВолгГМУ": {"r": 2, "t": "Колледж при медуниверситете, сильная база."}, "ВИТ": {"r": 1, "t": "Партнёр машиностроительного и транспортного кластеров."}, "ВПТКР": {"r": 1, "t": "Партнёр кластера «Машиностроение» 2025."}, "ВПК": {"r": 1, "t": "Партнёр кластера «Машиностроение» 2025."}, "ВИЭПП": {"r": -1, "t": "Часть программ без государственной аккредитации — отсрочку такие не дают, проверять отдельно."}};
+const TEMY = [
+  ["Море и река",       /26\./,                       "судовождение, мотористы, матросы"],
+  ["Энергетика",        /^13\./,                      "станции, сети, электроснабжение"],
+  ["Машины и металл",   /^(15|22)\./,                 "станки, сварка, металлургия"],
+  ["Электроника и связь",/^(11|12|27)\./,             "приборы, автоматика, управление"],
+  ["Транспорт и авто",  /^23\./,                      "автосервис, логистика, перевозки"],
+  ["Стройка",           /^08\./,                      "здания, сети, отделка"],
+  ["Компьютеры",        /^(09|10)\./,                 "программирование, сети, безопасность"],
+  ["Медицина",          /^(31|32|33|34)\./,           "лечебное, сестринское, фармация"],
+  ["Земля и животные",  /^(35|36)\./,                 "агро, ветеринария, лес"],
+  ["Еда и сервис",      /^(19|43)\./,                 "повар, кондитер, гостеприимство"],
+  ["Химия",             /^18\./,                      "пластмассы, технологии"],
+  ["Педагогика",        /^44\./,                      "школа, детский сад"],
+  ["Экономика и право", /^(38|40)\./,                 "бухучёт, юриспруденция"],
+  ["Прочее",            /./,                           ""]
+];
+function temaOf(p) {
+  for (const [name, re, sub] of TEMY) if (re.test(p.code || "")) return name;
+  return "Прочее";
+}
+const CITY_ORDER = {"Волжский": 0, "Светлый Яр": 1, "Волгоград": 2};
 function attPick(ball9, ball11) {
   return SPO.filter(p => p.ak !== "НЕТ АККРЕДИТАЦИИ" && p.ak !== "ПОД ВОПРОСОМ")
     .map(p => ({...p, g: attGrade(p, ball9, ball11)}))
@@ -443,9 +488,9 @@ const nm = k => SUBJ[k];
 let showAll = false, tab = "ege";
 let manual = null;   // Set выбранных предметов; null — режим не открыт
 let screen = new URLSearchParams(location.search).get("tab") === "quiz" ? "quiz" : "att";  // quiz | subj | att
-let att = {b9: "", b11: ""};
+let att = {b9: "4,1", b11: ""};
 try { const a = JSON.parse(localStorage.getItem(KEY + "-att") || "{}");
-      if (a && typeof a === "object") att = {b9: a.b9 || "", b11: a.b11 || ""}; } catch (e) {}
+      if (a && typeof a === "object") att = {b9: a.b9 || "4,1", b11: a.b11 || ""}; } catch (e) {}
 const saveAtt = () => { try { localStorage.setItem(KEY + "-att", JSON.stringify(att)); } catch (e) {} };
 
 function table(v, all) {
@@ -704,22 +749,68 @@ function renderManual(app) {
       ans = []; step = 0; showAll = false; tab = "ege"; manual = null; save(); render(); };
 }
 
+function repBadge(k) {
+  const r = KOLREP[k];
+  if (!r) return "";
+  const cls = r.r >= 2 ? "kg" : r.r === 1 ? "km" : r.r === 0 ? "kn" : "kb";
+  const lab = r.r >= 2 ? "сильный" : r.r === 1 ? "нормальный" : r.r === 0 ? "спорный" : "осторожно";
+  return `<span class="kmark ${cls}" title="${esc(r.t)}">${lab}</span>`;
+}
+
+function attByTema(rows) {
+  const groups = new Map();
+  rows.forEach(p => {
+    const t = temaOf(p);
+    if (!groups.has(t)) groups.set(t, []);
+    groups.get(t).push(p);
+  });
+  const order = TEMY.map(x => x[0]).filter(t => groups.has(t));
+  return order.map(t => {
+    const list = groups.get(t).sort((a, b) =>
+      (CITY_ORDER[a.c] ?? 3) - (CITY_ORDER[b.c] ?? 3) ||
+      a.g[0] - b.g[0] || (b.p || 0) - (a.p || 0));
+    const sub = (TEMY.find(x => x[0] === t) || [])[2] || "";
+    const places = list.reduce((s, p) => s + (p.p || 0), 0);
+    const vzh = list.filter(p => p.c === "Волжский").length;
+    return `<section class="tema">
+      <div class="thead">
+        <div><h3>${t}</h3>${sub ? `<span>${sub}</span>` : ""}</div>
+        <div class="tnum">${list.length} спец. · ${places} мест${vzh ? ` · ${vzh} в Волжском` : ""}</div>
+      </div>
+      ${list.map(p => `<div class="spec ${p.c === "Волжский" ? "near" : ""}">
+        <div class="sl">
+          <b>${esc(p.n)}</b>
+          <span>${esc(KOL[p.k].full)} · ${esc(p.c)}${p.c === "Волжский" ? " · рядом" : ""}${
+            p.q != null ? " · конкурс " + (p.q < 1 ? "недобор" : fq(p.q)) : ""}</span>
+          ${KOLREP[p.k] ? `<i>${esc(KOLREP[p.k].t)}</i>` : ""}
+        </div>
+        <div class="sr">
+          ${repBadge(p.k)}
+          <span class="tag t${Math.min(2, p.g[0])}">${p.g[1]}</span>
+          <span class="sm">${p.b} кл. · ${p.p == null ? "мест —" : p.p + " мест"} · аттестат ${fb(p.a)}</span>
+        </div>
+      </div>`).join("")}
+    </section>`;
+  }).join("");
+}
+
 function renderAtt(app) {
   const b9 = parseFloat(String(att.b9).replace(",", ".")), b11 = parseFloat(String(att.b11).replace(",", "."));
   const has = (b9 >= 3 && b9 <= 5) || (b11 >= 3 && b11 <= 5);
   const rows = has ? attPick(b9 >= 3 ? b9 : null, b11 >= 3 ? b11 : null) : [];
   const pass = rows.filter(p => p.g[0] === 0);
-  const tight = rows.filter(p => p.g[0] === 1);
   const places = pass.reduce((s, p) => s + (p.p || 0), 0);
   const inV = pass.filter(p => p.c === "Волжский");
+  const vPlaces = inV.reduce((s, p) => s + (p.p || 0), 0);
+  const ok = rows.filter(p => p.g[0] <= 1);
 
   app.innerHTML = `<div class="res">
     <div>
       <div class="kick">Без ЕГЭ</div>
       <h2 style="margin-top:8px">Куда возьмут с таким аттестатом</h2>
-      <p class="lede" style="margin-top:10px">Колледжи зачисляют по среднему баллу аттестата —
-      складывают все итоговые оценки и делят на их число. После одиннадцатого класса можно
-      подавать и на программы базы девятого: там мест в разы больше, поэтому оба поля полезны.</p>
+      <p class="lede" style="margin-top:10px">Колледжи зачисляют по среднему баллу аттестата.
+      С одиннадцатью классами можно подавать и на программы базы девятого — закон это прямо
+      разрешает, мест там в разы больше. Сначала показано то, что в Волжском, потом Волгоград.</p>
     </div>
     <section class="set">
       <div class="flds">
@@ -731,25 +822,33 @@ function renderAtt(app) {
       ${has ? `<div class="stats">
         <div><b class="num">${pass.length}</b><span>специальностей<br>берут уверенно</span></div>
         <div><b class="num">${places}</b><span>бюджетных мест<br>на них</span></div>
-        <div><b class="num">${tight.length}</b><span>ещё есть<br>шансы</span></div>
         <div><b class="num">${inV.length}</b><span>из них<br>в Волжском</span></div>
+        <div><b class="num">${vPlaces}</b><span>мест<br>в Волжском</span></div>
       </div>` : `<p style="margin-top:14px;color:var(--faint)">
         Введите хотя бы один балл — число от 3 до 5, например 3,45.</p>`}
     </section>
-    ${has ? `<section class="set">
-      <div class="kick">Все ${rows.length} специальностей: сначала те, куда проходит</div>
-      <p style="font-size:13.5px;color:var(--faint);margin:8px 0 0">
-        Если заполнено только одно поле, оно применяется к обеим базам —
-        колледжи смотрят на средний балл, а не на класс выпуска.</p>
-      ${attTable(rows)}
+    ${has ? `<div class="why" style="background:rgba(140,58,46,.08)">
+      <h3>Главное, что надо знать про колледж</h3>
+      <p>Отсрочка от армии даётся <b>один раз за всю жизнь</b> — и колледж, и вуз идут по одному
+      и тому же пункту закона. Если поступить в колледж в восемнадцать и выпуститься в двадцать,
+      на вуз отсрочки уже не останется. Колледж после одиннадцатого класса — это законченный путь
+      к профессии, а не ступенька к высшему образованию.</p>
+      <p>И второе: отсрочку даёт только программа <b>с государственной аккредитацией</b>.
+      Программы без неё из списка убраны, но перед подачей стоит проверить свою в реестре
+      Рособрнадзора.</p>
+    </div>
+    <section class="set alt" style="padding:0">
+      <div class="kick" style="margin-bottom:4px">${ok.length} специальностей по темам · сначала Волжский</div>
+      ${attByTema(ok)}
     </section>
     <div class="why">
-      <h3>Где балл не публикуют — шансы выше</h3>
-      <p>Часть колледжей не раскрывает балл последнего зачисленного. Это обычно значит,
-      что набор закрывается не полностью: заявлений мало и берут почти всех подавших.
-      Поэтому такие строки отмечены как «шанс высокий», а не как отказ — смотреть надо
-      на конкурс рядом с названием.</p>
-      <p>«Недобор» значит, что заявлений было меньше, чем мест: в 2026 году брали всех.</p>
+      <h3>Как читать пометки у колледжей</h3>
+      <p><b>Сильный</b> — колледж в федеральном проекте «Профессионалитет» или с медалями
+      чемпионата «Профессионалы»: это деньги, оборудование и договоры с работодателями.
+      <b>Спорный</b> — в проект не входит, отзывы противоречивые. <b>Осторожно</b> — заметный
+      негативный фон в отзывах или проблемы с аккредитацией отдельных программ.</p>
+      <p>«Недобор» значит, что заявлений было меньше, чем мест: в 2026 году брали всех.
+      Где балл аттестата не указан — колледж его не публикует, обычно это признак слабого конкурса.</p>
     </div>` : ""}
   </div>`;
 
