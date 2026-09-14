@@ -132,6 +132,7 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   text-decoration:none;border-left:1px solid var(--line)}
 .tog .tb-l:hover{background:var(--sand);color:var(--ink)}
 .tog button+button,.tog .tb-l+button{border-left:1px solid var(--line)}
+.navbar{margin:0 0 20px}
 @media (max-width:560px){.tog{flex-wrap:wrap}}
 .pk{font-family:Vollkorn,Georgia,serif;font-size:17px;font-weight:700;color:var(--ink);
   background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:7px 13px;
@@ -152,6 +153,7 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 </head>
 <body>
 <div class="wrap">
+<div class="tog navbar" id="mode"></div>
 <header>
   <div class="kick">Волгоград · Волжский · Астрахань · бюджет</div>
   <h1 style="margin-top:10px">Куда пойти учиться</h1>
@@ -160,7 +162,6 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   <p style="margin-top:16px;font-size:14.5px">Отдельно:
     <a href="bio-geo.html" style="color:var(--acc)">биология и география</a> —
     дорога без профильной математики.</p>
-  <div class="tog" id="mode" style="margin-top:18px"></div>
   <div class="bar" id="bar"></div>
 </header>
 <main id="app"></main>
