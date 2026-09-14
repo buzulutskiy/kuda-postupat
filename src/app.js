@@ -199,10 +199,12 @@ function render() {
             <summary>
               <span class="pb">${b}</span>
               <span class="pn"><b>${esc(p.n)}</b><span>${esc(p.v)} · ${esc(p.c)}</span></span>
-              <span class="pm">${openPl(p)} мест${p.sog26 ? " · согласий " + p.sog26 : ""}${p.k26 ? " · заявлений " + (p.zay26 || "") : ""}</span>
+              <span class="pm">${openPl(p)} мест${p.sog26 ? " · согласий " + p.sog26 : ""}${p.k26 ? " · заявлений " + (p.zay26 || "") : ""}${p.dvi ? `<span class="dvi">+ экзамен в вузе</span>` : ""}</span>
               <span class="tag ${cls}">${lab}</span>
             </summary>
             <div class="pbody">
+              ${p.dvi ? `<div class="dvi-line"><b>Кроме ЕГЭ нужен экзамен в самом вузе:</b> ${esc(p.dvi)}.
+                Он проходит в вузе по своему расписанию, и без него документы не примут.</div>` : ""}
               ${note}
               ${VUZSLUG[p.v] ? `<p class="src-line"><a href="${PKV}${VUZSLUG[p.v]}/priem-2026"
                 target="_blank" rel="noopener">Проверить на Поступашкине: приём 2026 в ${esc(p.v)} →</a></p>` : ""}
