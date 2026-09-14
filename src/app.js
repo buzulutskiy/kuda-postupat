@@ -9,12 +9,12 @@ const esc = s => String(s).replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&
 const fq = v => v == null ? "—" : String(v).replace(".", ",");
 const fk = v => (Number.isInteger(v) ? v + ",0" : String(v).replace(".", ","));
 const passBall = p => p.s26 || p.s;
-const openPl = p => p.o == null ? p.p : p.o;
+const openPl = p => p.p26 != null ? p.p26 : (p.o == null ? p.p : p.o);
 
 
 
 function fits(p, nab) {
-  if (p.o === 0 || !passBall(p)) return false;
+  if (openPl(p) === 0 || !passBall(p)) return false;
   const set = new Set(["русский", ...nab]);
   if (!p.r.every(x => set.has(x))) return false;
   if (p.ch.length && !p.ch.some(x => set.has(x))) return false;
@@ -217,7 +217,7 @@ function render() {
             <summary>
               <span class="pb">${b}</span>
               <span class="pn"><b>${esc(p.n)}</b><span>${esc(p.v)} · ${esc(p.c)}</span></span>
-              <span class="pm">${openPl(p)} мест${p.k26 ? " · конкурс " + fq(p.k26) : ""}</span>
+              <span class="pm">${openPl(p)} мест${p.sog26 ? " · согласий " + p.sog26 : ""}${p.k26 ? " · заявлений " + (p.zay26 || "") : ""}</span>
               <span class="tag ${cls}">${lab}</span>
             </summary>
             <div class="pbody">
