@@ -169,11 +169,14 @@ function render() {
         return `<div class="sub-card">
           <div class="hd"><h3>${i.n}</h3><span class="tag ${vcls}">${d.v}</span></div>
           <p class="plus">${d.t}</p>
-          <div class="n60"><b>Что придётся выучить</b><p>${d.p}</p></div>
+          <div class="n60"><b>До 60 баллов · ${st.n} заданий · ${st.h} ч</b><p>${d.p}</p></div>
+          <div class="n60 lvl70"><b>Чтобы добить до 70 · ${st.n70 - st.n
+            ? "+" + (st.n70 - st.n) + " заданий · +" + (st.h70 - st.h) + " ч"
+            : "тех же заданий хватает"}</b><p>${d.p70}</p></div>
           <p class="n60m">${d.m}</p>
-          <div class="meta">${st.n} заданий · ${st.p} первичных из ${i.pmax} ·
-            <b style="color:var(--ink)">${st.h} ч</b> подготовки с нуля ·
-            это ${fq((st.h / WEEKS).toFixed(1))} ч в неделю до конца мая</div>
+          <div class="meta">Всего на 70: ${st.n70} заданий · ${st.p70} первичных из ${st.pmax} ·
+            <b style="color:var(--ink)">${st.h70} ч</b> с нуля ·
+            это ${fq((st.h70 / WEEKS).toFixed(1))} ч в неделю до конца мая</div>
         </div>`;
       }).join("")}
     </section>
