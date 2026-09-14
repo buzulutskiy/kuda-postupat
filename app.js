@@ -127,22 +127,33 @@ function render() {
     <section>
       <h2>Куда можно поступить — все ${ok.length}</h2>
       <p class="lede" style="font-size:15.5px">Проходной — итог приёма 2026 года, конкурс — заявлений
-      на бюджетное место.</p>
-      ${ok.length ? `<div class="scroll"><table>
-        <colgroup><col><col class="w2"><col class="w1"><col class="w1"><col class="w2"></colgroup>
-        <tr><th>Направление</th><th class="r">Проходной</th><th class="r">Конкурс</th>
-        <th class="r">Мест</th><th class="r">Чем берётся</th></tr>
-        ${ok.map(p => {
+      на бюджетное место. Нажмите на строку, чтобы прочитать, чем предстоит заниматься,
+      какие плюсы и где подводные камни.</p>
+      ${ok.length ? ok.map(p => {
           const b = passBall(p);
           const cls = b <= 150 ? "t0" : (b <= 180 ? "t0" : (b <= 200 ? "t1" : "t2"));
-          const lab = b <= 150 ? "по 50" : (b <= 180 ? "по 60" : (b <= 200 ? "по 67" : "по 70+"));
-          return `<tr><td class="nm"><b>${esc(p.n)}</b><span>${esc(p.v)} · ${esc(p.c)} — ${
-            GRP[p.code.slice(0,2)] || ""}</span></td>
-            <td class="r">${b}</td><td class="r">${fq(p.k26)}</td>
-            <td class="r">${openPl(p)}</td>
-            <td class="r"><span class="tag ${cls}">${lab}</span></td></tr>`;
-        }).join("")}
-      </table></div>` : `<p style="color:var(--faint)">С этим набором бюджетных программ нет.</p>`}
+          const lab = b <= 150 ? "берётся по 50 за предмет" : (b <= 180 ? "по 60 за предмет"
+                    : (b <= 200 ? "по 67 за предмет" : "по 70 и выше"));
+          const g = DESC[p.code.slice(0, 2)];
+          const note = p.nt && !/сводке|агрегатора|ориентир|данные вуза|проходной 20/.test(p.nt)
+                     ? `<div class="note-line">${esc(p.nt)}</div>` : "";
+          return `<details class="prog">
+            <summary>
+              <span class="pb">${b}</span>
+              <span class="pn"><b>${esc(p.n)}</b><span>${esc(p.v)} · ${esc(p.c)}</span></span>
+              <span class="pm">${openPl(p)} мест${p.k26 ? " · конкурс " + fq(p.k26) : ""}</span>
+              <span class="tag ${cls}">${lab}</span>
+            </summary>
+            <div class="pbody">
+              ${note}
+              ${g ? `<p class="what"><b>${g.t}.</b> ${g.w}</p>
+              <div class="pm2">
+                <div><b>Плюсы</b><ul>${g.p.map(x => `<li>${x}</li>`).join("")}</ul></div>
+                <div><b>Минусы и подводные камни</b><ul>${g.m.map(x => `<li>${x}</li>`).join("")}</ul></div>
+              </div>` : ""}
+            </div>
+          </details>`;
+        }).join("") : `<p style="color:var(--faint)">С этим набором бюджетных программ нет.</p>`}
     </section>`;
 
   document.querySelectorAll(".pk").forEach(b => b.onclick = () => {
