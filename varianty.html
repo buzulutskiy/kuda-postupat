@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Шесть вариантов набора предметов ЕГЭ: что каждый открывает, сколько стоит в часах и чем за него платишь.">
+<meta name="color-scheme" content="light dark">
+<title>Шесть дорог на бюджет</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,500;0,700;1,500&family=PT+Sans:wght@400;700&display=swap">
+<style>
+:root{
+  --ink:#171a17; --body:#3c423b; --faint:#7c8378;
+  --paper:#fbfaf7; --card:#ffffff; --line:#ddd9cd; --line2:#efece3;
+  --acc:#2f6b4f; --acc-soft:#e4ede7;
+  --ok:#2f6b4f; --mid:#8a6310; --bad:#8c3a2e;
+  --sand:#f2efe6;
+  --sh:0 1px 2px rgba(23,26,23,.05), 0 8px 24px -12px rgba(23,26,23,.18);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#f0efe9; --body:#c6c8c0; --faint:#8b9188;
+  --paper:#141714; --card:#1d211d; --line:#343a33; --line2:#282d27;
+  --acc:#7fc4a1; --acc-soft:#22302a;
+  --ok:#7fc4a1; --mid:#d4a942; --bad:#e08b7c;
+  --sand:#20251f;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+}}
+:root[data-theme="dark"]{
+  --ink:#f0efe9; --body:#c6c8c0; --faint:#8b9188;
+  --paper:#141714; --card:#1d211d; --line:#343a33; --line2:#282d27;
+  --acc:#7fc4a1; --acc-soft:#22302a;
+  --ok:#7fc4a1; --mid:#d4a942; --bad:#e08b7c;
+  --sand:#20251f;
+  --sh:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--body);
+  font-family:"PT Sans",-apple-system,Segoe UI,Arial,sans-serif;
+  font-size:16px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 64px}
+h1,h2,h3{font-family:Vollkorn,Georgia,serif;color:var(--ink);margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.08;letter-spacing:-.01em}
+h2{font-size:23px;line-height:1.2}
+h3{font-size:18px}
+p{margin:0}
+.lede{font-size:17px;margin-top:12px;max-width:58ch}
+.kick{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+  font-weight:700}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:4px}
+
+/* шапка + прогресс */
+header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:24px}
+.bar{display:flex;gap:3px;margin-top:18px}
+.bar i{flex:1;height:5px;background:var(--line2);border-radius:2px;transition:background .2s}
+.bar i.on{background:var(--acc)}
+.bar i.now{background:var(--ink)}
+
+/* вопрос */
+.q{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:24px;box-shadow:var(--sh)}
+.q .step{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.opts{display:grid;gap:8px;margin-top:18px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;
+  background:transparent;border:1px solid var(--line);border-radius:8px;padding:13px 15px;
+  transition:border-color .12s, background .12s}
+.opt:hover{border-color:var(--acc);background:var(--acc-soft)}
+.opt.sel{border-color:var(--acc);background:var(--acc-soft);border-width:2px;padding:12px 14px}
+.opt .mk{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);
+  margin-top:1px}
+.opt.sel .mk{border:6px solid var(--acc)}
+.opt b{display:block;color:var(--ink);font-size:16px;line-height:1.3}
+.opt span{display:block;color:var(--faint);font-size:13.5px;margin-top:3px}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px}
+.btn{background:var(--acc);color:#fff;border:none;border-radius:7px;
+  padding:11px 22px;font-weight:700}
+:root[data-theme="dark"] .btn,:root:not([data-theme="light"]) .btn{color:#0f1410}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .btn{color:#fff}}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.g{background:transparent;color:var(--faint);border:1px solid var(--line)}
+
+/* результат */
+.res{display:grid;gap:22px}
+.set{background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:22px;box-shadow:var(--sh)}
+.set.alt{box-shadow:none;background:transparent}
+.set .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+  flex-wrap:wrap}
+.subj{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 4px}
+.subj i{font-style:normal;font-family:Vollkorn,serif;font-size:19px;color:var(--ink);
+  background:var(--sand);border-radius:6px;padding:5px 11px;font-weight:700}
+.subj i.m{background:var(--acc-soft);box-shadow:inset 0 0 0 1.5px var(--acc)}
+.stats{display:flex;gap:26px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line2);
+  flex-wrap:wrap}
+.stats div b{display:block;font-family:Vollkorn,serif;font-size:26px;color:var(--ink);
+  line-height:1;font-variant-numeric:tabular-nums}
+.stats div span{display:block;font-size:12px;color:var(--faint);margin-top:4px}
+
+table{width:100%;border-collapse:collapse;margin-top:16px;font-size:14.5px;
+  table-layout:fixed}
+th{text-align:left;font-size:10px;letter-spacing:.03em;text-transform:uppercase;
+  color:var(--faint);font-weight:700;padding:0 0 8px 14px;border-bottom:1px solid var(--line);
+  line-height:1.2;vertical-align:bottom;white-space:nowrap}
+th:first-child,td:first-child{padding-left:0}
+th.r,td.r{text-align:right}
+td{padding:10px 0 10px 14px;border-bottom:1px solid var(--line2);vertical-align:top;
+  font-variant-numeric:tabular-nums}
+col.w1{width:62px}col.w2{width:80px}col.w3{width:80px}col.w4{width:126px}
+@media (max-width:720px){table{table-layout:auto;font-size:13.5px}
+  th{font-size:9.5px;padding-left:10px}td{padding-left:10px}
+  col.w1,col.w2,col.w3,col.w4{width:auto}}
+td.nm{font-variant-numeric:normal}
+td.nm b{color:var(--ink);font-weight:400}
+td.nm span{color:var(--faint);font-size:12.5px;display:block}
+.cell-sub{display:block;font-size:10px;color:var(--faint);line-height:1.2;margin-top:1px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:4px;
+  line-height:1.25;max-width:100%;white-space:normal;text-align:right}
+.t0{background:var(--acc-soft);color:var(--ok)}
+.t1{background:rgba(138,99,16,.12);color:var(--mid)}
+.t2{background:rgba(140,58,46,.11);color:var(--bad)}
+.scroll{overflow-x:auto}
+.why{background:var(--sand);border-radius:9px;padding:18px 20px;font-size:14.5px}
+.why h3{margin-bottom:8px}
+.why p+p{margin-top:9px}
+.foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:13px;color:var(--faint)}
+.tog{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.tog button{background:transparent;border:none;padding:7px 13px;font-size:13.5px;color:var(--faint)}
+.tog button.on{background:var(--acc-soft);color:var(--ink);font-weight:700}
+.pk{font-family:Vollkorn,Georgia,serif;font-size:17px;font-weight:700;color:var(--ink);
+  background:var(--sand);border:1.5px solid transparent;border-radius:7px;padding:7px 13px;
+  transition:border-color .12s,background .12s}
+.pk:hover{border-color:var(--line)}
+.pk.on{background:var(--acc-soft);border-color:var(--acc)}
+.flds{display:flex;gap:18px;flex-wrap:wrap}
+.flds label{display:block;font-size:13px;color:var(--faint);font-weight:700;
+  letter-spacing:.02em}
+.flds input{display:block;margin-top:6px;width:150px;font-family:Vollkorn,Georgia,serif;
+  font-size:26px;font-weight:700;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;
+  font-variant-numeric:tabular-nums}
+.flds input:focus{outline:none;border-color:var(--acc)}
+.skip{background:none;border:none;padding:0;color:var(--acc);font-size:14px;
+  text-decoration:underline;text-underline-offset:3px}
+
+.tog{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden;flex-wrap:wrap}
+.tog .tb-l{display:inline-block;padding:7px 13px;font-size:13.5px;color:var(--faint);
+  text-decoration:none;border-left:1px solid var(--line)}
+.tog .tb-l:first-child{border-left:none}
+.tog .tb-l:hover{background:var(--sand);color:var(--ink)}
+.tog .tb-l.on{background:var(--acc-soft);color:var(--ink);font-weight:700}
+.navbar{margin:0 0 20px}
+.route{border-top:1px solid var(--line);padding-top:26px;margin-top:30px}
+.route.dead{opacity:.72}
+.rhead{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.rhead h2{font-size:27px;margin-top:6px}
+.who{margin-top:9px;font-size:15.5px;max-width:46ch}
+.rnum{display:flex;gap:22px;flex:none;padding-top:6px}
+.rnum div{text-align:right}
+.rnum b{display:block;font-family:Vollkorn,serif;font-size:27px;color:var(--ink);line-height:1;
+  font-variant-numeric:tabular-nums}
+.rnum span{display:block;font-size:11px;color:var(--faint);margin-top:4px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:20px}
+@media (max-width:640px){.cols{grid-template-columns:1fr;gap:16px}.rnum{gap:16px}}
+.cols h3{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);
+  font-family:"PT Sans",sans-serif}
+.cols ul{margin:9px 0 0;padding-left:19px;display:grid;gap:6px;font-size:14.5px}
+.pro li::marker{color:var(--ok)}
+.con li::marker{color:var(--bad)}
+.hrs{margin-top:18px;background:var(--sand);border-radius:8px;padding:12px 15px;font-size:14px}
+.try{margin-top:14px;font-size:14px;color:var(--faint)}
+.try a{color:var(--acc)}
+.big{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:22px 24px;
+  margin:22px 0;box-shadow:var(--sh)}
+.big h2{font-size:22px}
+.big p{margin-top:11px;font-size:15px;max-width:64ch}
+.q{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:14px 0;font-size:14.5px}
+.q b{color:var(--ink)}
+.q cite{display:block;font-style:normal;font-size:12.5px;color:var(--faint);margin-top:5px}
+.q cite a{color:var(--faint)}
+.steps{counter-reset:s;display:grid;gap:14px;margin-top:16px}
+.steps li{list-style:none;position:relative;padding-left:38px;font-size:15px}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:-1px;
+  width:26px;height:26px;border-radius:50%;background:var(--acc-soft);color:var(--acc);
+  font-weight:700;font-size:13px;display:grid;place-items:center}
+.steps b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="tog navbar">
+  <a class="tb-l" href="./">Тест</a>
+  <a class="tb-l" href="vzvesit.html">Предметы ЕГЭ</a>
+  <a class="tb-l" href="./?tab=att">Аттестат</a>
+  <a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>
+  <a class="tb-l on" href="varianty.html">Варианты</a>
+</div>
+<header style="border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:10px">
+  <div class="kick">Решать тебе</div>
+  <h1 style="margin-top:10px">Шесть дорог на бюджет</h1>
+  <p class="lede">Задача простая: поступить на бюджет, всё равно куда. Времени — до июня 2027,
+  база — почти с нуля. Ниже шесть наборов предметов: что каждый открывает, сколько стоит в часах
+  и чем за него придётся заплатить. Цифры — из приказов о зачислении 2026 года и разбора
+  демоверсий ФИПИ 2027. Выбирать никто за тебя не будет.</p>
+</header>
+
+<div class="big">
+  <h2>Три вещи, которые надо понять до выбора</h2>
+  <p><b>1. Настоящая развилка — не физика, а профильная математика.</b> Из 75 бюджетных программ
+  с проходным до 170 баллов она нужна на 40. Всё остальное — вопрос вкуса, а это — вопрос
+  доступа к половине мест.</p>
+  <p><b>2. Физику и информатику почти везде принимают на выбор.</b> Строго физика нужна ровно
+  на одной программе из 75, а 56 программ берут любой из этих двух предметов. Если физика
+  не идёт — её можно не брать, не теряя почти ничего.</p>
+  <p><b>3. «Лёгкий предмет» — миф, который дорого стоит.</b> Обществознание выбирают 255 тысяч
+  человек в год, и средний балл по нему 53,6 — минимум за шесть лет; порог не берёт примерно
+  каждый пятый. У биологии средний балл 54,5 и 16% не прошедших порог — это худшие цифры
+  среди всех ЕГЭ. Лёгких предметов не бывает, бывают разные виды труда.</p>
+</div>
+
+
+<section class="route" id="r1">
+  <div class="rhead">
+    <div>
+      <div class="kick">Вариант 1</div>
+      <h2>Математика и физика</h2>
+      <p class="who">Если интересно, почему всё устроено именно так, и готов разбираться в формулах.</p>
+    </div>
+    <div class="rnum">
+      <div><b>41</b><span>программ</span></div>
+      <div><b>1070</b><span>мест</span></div>
+      <div><b>289</b><span>часов</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="pro"><h3>Что хорошего</h3><ul><li>Максимум дверей: 41 программа и больше тысячи мест</li><li>Самые низкие проходные в ВолГУ — 124-138, и туда зачисляют по 80-114 человек</li><li>Физику принимают почти везде, где нужен технический профиль</li></ul></div>
+    <div class="con"><h3>Чем платишь</h3><ul><li>Физика стоит на математике: если математика хромает, физика не встанет</li><li>Половина заданий — расписать полное решение, там нет вариантов ответа</li><li>Из всех предметов у физики самый высокий коэффициент усилий вместе с химией</li></ul></div>
+  </div>
+  <div class="hrs">Часы до 50 баллов по каждому предмету: русский 136 ч · математика 63 ч · физика 90 ч = <b>289 ч</b>.
+    До минимального порога — 185 ч.</div>
+  <div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>Куда проходит</th><th class="r">Проходной</th><th class="r">Мест</th><th class="r">Конкурс</th><th class="r">Зачислено</th></tr></thead><tbody><tr><td class='nm'><b>Радиоэлектронные системы и комплексы</b><span>ВолГУ</span></td><td class='r'>124</td><td class='r'>70</td><td class='r'>конкурс 4.1</td><td class='r'>82</td></tr><tr><td class='nm'><b>Радиотехника — программируемые цифровые устройства</b><span>ВолГУ</span></td><td class='r'>126</td><td class='r'>46</td><td class='r'>конкурс 5.0</td><td class='r'>114</td></tr><tr><td class='nm'><b>Инфокоммуникационные технологии и системы связи</b><span>ВолГУ</span></td><td class='r'>126</td><td class='r'>45</td><td class='r'>конкурс 5.0</td><td class='r'>—</td></tr><tr><td class='nm'><b>Технология продукции и организация общественного пит</b><span>АГТУ</span></td><td class='r'>132</td><td class='r'>12</td><td class='r'>конкурс 7.8</td><td class='r'>12</td></tr><tr><td class='nm'><b>Нанотехнологии и микросистемная техника</b><span>ВолГУ</span></td><td class='r'>138</td><td class='r'>70</td><td class='r'>конкурс 6.5</td><td class='r'>87</td></tr></tbody></table></div>
+  <p class="try">Проверить на себе: <a href="znakomstvo.html">открой настоящие задания</a>
+    и посмотри физика — не «кажется ли проще», а хочется ли в этом разбираться.</p>
+</section>
+<section class="route" id="r2">
+  <div class="rhead">
+    <div>
+      <div class="kick">Вариант 2</div>
+      <h2>Математика и информатика</h2>
+      <p class="who">Если нравится возиться с компьютером и не бесит, когда что-то не сходится с первого раза.</p>
+    </div>
+    <div class="rnum">
+      <div><b>39</b><span>программ</span></div>
+      <div><b>988</b><span>мест</span></div>
+      <div><b>272</b><span>часов</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="pro"><h3>Что хорошего</h3><ul><li>Самый широкий выбор после физики — почти те же двери</li><li>Информатика сдаётся за компьютером, половина заданий решается в таблицах и программой в три строки</li><li>Прямо превращается в профессию: то, что учишь, сразу применимо</li><li>Задания предсказуемы — типы повторяются из года в год</li></ul></div>
+    <div class="con"><h3>Чем платишь</h3><ul><li>Профильная математика обязательна, она здесь самая дорогая часть</li><li>Без программирования выше 50 не выйти — 20 заданий из 27 требуют считать</li><li>Учить придётся самому: в школе информатики такого уровня обычно не дают</li></ul></div>
+  </div>
+  <div class="hrs">Часы до 50 баллов по каждому предмету: русский 136 ч · математика 63 ч · информатика 73 ч = <b>272 ч</b>.
+    До минимального порога — 186 ч.</div>
+  <div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>Куда проходит</th><th class="r">Проходной</th><th class="r">Мест</th><th class="r">Конкурс</th><th class="r">Зачислено</th></tr></thead><tbody><tr><td class='nm'><b>Радиотехника — программируемые цифровые устройства</b><span>ВолГУ</span></td><td class='r'>126</td><td class='r'>46</td><td class='r'>конкурс 5.0</td><td class='r'>114</td></tr><tr><td class='nm'><b>Инфокоммуникационные технологии и системы связи</b><span>ВолГУ</span></td><td class='r'>126</td><td class='r'>45</td><td class='r'>конкурс 5.0</td><td class='r'>—</td></tr><tr><td class='nm'><b>Нанотехнологии и микросистемная техника</b><span>ВолГУ</span></td><td class='r'>138</td><td class='r'>70</td><td class='r'>конкурс 6.5</td><td class='r'>87</td></tr><tr><td class='nm'><b>Природообустройство и водопользование</b><span>ВолГАУ</span></td><td class='r'>140</td><td class='r'>16</td><td class='r'>конкурс 6.7</td><td class='r'>24</td></tr><tr><td class='nm'><b>Управление водным транспортом и гидрографическое обе</b><span>АГТУ</span></td><td class='r'>141</td><td class='r'>25</td><td class='r'>конкурс 5.8</td><td class='r'>25</td></tr></tbody></table></div>
+  <p class="try">Проверить на себе: <a href="znakomstvo.html">открой настоящие задания</a>
+    и посмотри информатика — не «кажется ли проще», а хочется ли в этом разбираться.</p>
+</section>
+<section class="route" id="r3">
+  <div class="rhead">
+    <div>
+      <div class="kick">Вариант 3</div>
+      <h2>Биология и химия</h2>
+      <p class="who">Если тянет к живому и не пугает, что учить придётся много и подряд.</p>
+    </div>
+    <div class="rnum">
+      <div><b>23</b><span>программ</span></div>
+      <div><b>344</b><span>мест</span></div>
+      <div><b>340</b><span>часов</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="pro"><h3>Что хорошего</h3><ul><li>Биологию можно учить кусками: темы почти не зависят друг от друга</li><li>Ветеринарно-санитарная экспертиза в АГТУ — проходной 125 при конкурсе 4,0</li><li>Открывает пищевые технологии, ветеринарию, аквакультуру</li></ul></div>
+    <div class="con"><h3>Чем платишь</h3><ul><li>Химия — второй по тяжести предмет после математики, 214 часов до 60 баллов</li><li>Вдвоём это самый долгий набор: 340 часов до 50 баллов по каждому</li><li>Мест втрое меньше, чем на техническом пути</li></ul></div>
+  </div>
+  <div class="hrs">Часы до 50 баллов по каждому предмету: русский 136 ч · биология 60 ч · химия 144 ч = <b>340 ч</b>.
+    До минимального порога — 206 ч.</div>
+  <div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>Куда проходит</th><th class="r">Проходной</th><th class="r">Мест</th><th class="r">Конкурс</th><th class="r">Зачислено</th></tr></thead><tbody><tr><td class='nm'><b>Ветеринарно-санитарная экспертиза</b><span>АГТУ</span></td><td class='r'>125</td><td class='r'>19</td><td class='r'>конкурс 4.0</td><td class='r'>19</td></tr><tr><td class='nm'><b>Продукты питания из растительного сырья — технология</b><span>ВолГАУ</span></td><td class='r'>126</td><td class='r'>11</td><td class='r'>конкурс 8.8</td><td class='r'>12</td></tr><tr><td class='nm'><b>Продукты питания животного происхождения — технологи</b><span>ВолгГТУ</span></td><td class='r'>131</td><td class='r'>14</td><td class='r'>—</td><td class='r'>—</td></tr><tr><td class='nm'><b>Продукты питания животного происхождения — технологи</b><span>ВолгГТУ</span></td><td class='r'>131</td><td class='r'>10</td><td class='r'>—</td><td class='r'>—</td></tr><tr><td class='nm'><b>Водные биоресурсы и аквакультура</b><span>АГТУ</span></td><td class='r'>133</td><td class='r'>20</td><td class='r'>конкурс 7.4</td><td class='r'>20</td></tr></tbody></table></div>
+  <p class="try">Проверить на себе: <a href="znakomstvo.html">открой настоящие задания</a>
+    и посмотри химия — не «кажется ли проще», а хочется ли в этом разбираться.</p>
+</section>
+<section class="route" id="r4">
+  <div class="rhead">
+    <div>
+      <div class="kick">Вариант 4</div>
+      <h2>Биология и география</h2>
+      <p class="who">Если не хочется ни формул, ни программирования, а запоминать и разбираться в живом и в карте — нормально.</p>
+    </div>
+    <div class="rnum">
+      <div><b>11</b><span>программ</span></div>
+      <div><b>181</b><span>мест</span></div>
+      <div><b>296</b><span>часов</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="pro"><h3>Что хорошего</h3><ul><li>Ни одного задания уровня «тяжело» — самый спокойный набор из всех</li><li>До порога дешевле всех: 160 часов на три предмета вместе</li><li>География — предмет про узнавание и чтение карты, а не про решение</li><li>Реально пройти: Водные биоресурсы АГТУ — 133, Садоводство ВолГАУ — 137</li></ul></div>
+    <div class="con"><h3>Чем платишь</h3><ul><li>Всего 11 программ и 181 место — в шесть раз меньше, чем у технического пути</li><li>Почти все места в аграрном и рыбохозяйственном профиле, выбор специальности узкий</li><li>Порог по географии высокий: на 60 баллов нужно закрыть 25 заданий из 29, то есть почти всё</li><li>Конкурс на этих программах не маленький: у Садоводства 12,4 человека на место</li></ul></div>
+  </div>
+  <div class="hrs">Часы до 50 баллов по каждому предмету: русский 136 ч · биология 60 ч · география 100 ч = <b>296 ч</b>.
+    До минимального порога — 160 ч.</div>
+  <div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>Куда проходит</th><th class="r">Проходной</th><th class="r">Мест</th><th class="r">Конкурс</th><th class="r">Зачислено</th></tr></thead><tbody><tr><td class='nm'><b>Водные биоресурсы и аквакультура</b><span>АГТУ</span></td><td class='r'>133</td><td class='r'>20</td><td class='r'>конкурс 7.4</td><td class='r'>20</td></tr><tr><td class='nm'><b>Садоводство</b><span>ВолГАУ</span></td><td class='r'>137</td><td class='r'>14</td><td class='r'>конкурс 12.4</td><td class='r'>16</td></tr><tr><td class='nm'><b>Лесное дело</b><span>ВолГАУ</span></td><td class='r'>140</td><td class='r'>6</td><td class='r'>конкурс 8.8</td><td class='r'>14</td></tr><tr><td class='nm'><b>Производство и переработка сельхозпродукции — животн</b><span>ВолГАУ</span></td><td class='r'>141</td><td class='r'>12</td><td class='r'>конкурс 8.4</td><td class='r'>16</td></tr><tr><td class='nm'><b>Производство и переработка сельхозпродукции — растен</b><span>ВолГАУ</span></td><td class='r'>142</td><td class='r'>31</td><td class='r'>конкурс 4.1</td><td class='r'>36</td></tr></tbody></table></div>
+  <p class="try">Проверить на себе: <a href="znakomstvo.html">открой настоящие задания</a>
+    и посмотри география — не «кажется ли проще», а хочется ли в этом разбираться.</p>
+</section>
+<section class="route" id="r5">
+  <div class="rhead">
+    <div>
+      <div class="kick">Вариант 5</div>
+      <h2>Математика и география</h2>
+      <p class="who">Промежуточный вариант: математика ради широты, география вместо физики.</p>
+    </div>
+    <div class="rnum">
+      <div><b>7</b><span>программ</span></div>
+      <div><b>140</b><span>мест</span></div>
+      <div><b>299</b><span>часов</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="pro"><h3>Что хорошего</h3><ul><li>География заметно легче физики и не требует счёта</li><li>Открывает агроинженерию и геологию — там есть бюджет</li></ul></div>
+    <div class="con"><h3>Чем платишь</h3><ul><li>Дверей мало: 7 программ, 140 мест</li><li>Проходные выше: от 152, и конкурс до 19 человек на место</li><li>Математику всё равно учить — а это самая дорогая часть, но широту она здесь не даёт</li></ul></div>
+  </div>
+  <div class="hrs">Часы до 50 баллов по каждому предмету: русский 136 ч · математика 63 ч · география 100 ч = <b>299 ч</b>.
+    До минимального порога — 175 ч.</div>
+  <div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>Куда проходит</th><th class="r">Проходной</th><th class="r">Мест</th><th class="r">Конкурс</th><th class="r">Зачислено</th></tr></thead><tbody><tr><td class='nm'><b>Экология и природопользование</b><span>ВолГУ</span></td><td class='r'>152</td><td class='r'>22</td><td class='r'>—</td><td class='r'>—</td></tr><tr><td class='nm'><b>Геология. Направленность (профиль) &amp;quot;Геология и </b><span>АГУ</span></td><td class='r'>153</td><td class='r'>19</td><td class='r'>конкурс 11.4</td><td class='r'>19</td></tr><tr><td class='nm'><b>Агроинженерия — беспилотные системы в АПК</b><span>ВолГАУ</span></td><td class='r'>154</td><td class='r'>16</td><td class='r'>конкурс 15.6</td><td class='r'>18</td></tr><tr><td class='nm'><b>Агроинженерия — автоматизация технологических процес</b><span>ВолГАУ</span></td><td class='r'>157</td><td class='r'>16</td><td class='r'>конкурс 19.5</td><td class='r'>23</td></tr><tr><td class='nm'><b>Агроинженерия — электрооборудование и электротехноло</b><span>ВолГАУ</span></td><td class='r'>158</td><td class='r'>26</td><td class='r'>конкурс 10.9</td><td class='r'>38</td></tr></tbody></table></div>
+  <p class="try">Проверить на себе: <a href="znakomstvo.html">открой настоящие задания</a>
+    и посмотри география — не «кажется ли проще», а хочется ли в этом разбираться.</p>
+</section>
+<section class="route dead" id="r6">
+  <div class="rhead">
+    <div>
+      <div class="kick">Вариант 6</div>
+      <h2>Биология и обществознание</h2>
+      <p class="who">Самый популярный выбор в школе — и почти тупик по бюджету.</p>
+    </div>
+    <div class="rnum">
+      <div><b>3</b><span>программ</span></div>
+      <div><b>48</b><span>мест</span></div>
+      <div><b>287</b><span>часов</span></div>
+    </div>
+  </div>
+  <div class="cols">
+    <div class="pro"><h3>Что хорошего</h3><ul><li>Обществознание кажется понятным, потому что про знакомую жизнь</li></ul></div>
+    <div class="con"><h3>Чем платишь</h3><ul><li>Всего 3 программы и 48 мест на оба города</li><li>Обществознание — один из самых низких средних баллов по стране: «понятно» не значит «легко сдать»</li><li>Девять заданий из 25 требуют писать развёрнутый текст по жёстким критериям</li></ul></div>
+  </div>
+  <div class="hrs">Часы до 50 баллов по каждому предмету: русский 136 ч · биология 60 ч · обществознание 91 ч = <b>287 ч</b>.
+    До минимального порога — 191 ч.</div>
+  <div class="scroll"><table><colgroup><col><col class="w1"><col class="w2"><col class="w3"><col class="w4"></colgroup><thead><tr><th>Куда проходит</th><th class="r">Проходной</th><th class="r">Мест</th><th class="r">Конкурс</th><th class="r">Зачислено</th></tr></thead><tbody><tr><td class='nm'><b>Профессиональное обучение — индустриальная педагогик</b><span>ВИЭПП</span></td><td class='r'>135</td><td class='r'>25</td><td class='r'>конкурс 4.8</td><td class='r'>13</td></tr><tr><td class='nm'><b>Педобразование — биология и химия</b><span>ВГСПУ</span></td><td class='r'>166</td><td class='r'>13</td><td class='r'>конкурс 10.2</td><td class='r'>21</td></tr><tr><td class='nm'><b>Психология и безопасность педагогики в цифровой сред</b><span>ВИЭПП</span></td><td class='r'>168</td><td class='r'>10</td><td class='r'>конкурс 5.2</td><td class='r'>9</td></tr></tbody></table></div>
+  <p class="try">Проверить на себе: <a href="znakomstvo.html">открой настоящие задания</a>
+    и посмотри обществознание — не «кажется ли проще», а хочется ли в этом разбираться.</p>
+</section>
+
+<div class="big" style="margin-top:34px">
+  <h2>Что говорят те, кто уже пробовал</h2>
+  <p>Это не мои выводы, а то, что пишут учителя, репетиторы и выпускники. Ссылки на источники —
+  под каждой цитатой.</p>
+
+  <h3 style="margin-top:20px;font-size:17px">Про физику с нуля</h3>
+  <div class="q"><b>Учитель физики Константин Барковец:</b> если учишься в обычном классе,
+  где физика два раза в неделю, «в лучшем случае перейдёшь порог, школьной базовой программы
+  не хватит». Готовиться — значит решать не две задачи в день, а двадцать.
+  <cite><a href="https://www.pravmir.ru/mnogie-deti-umnee-menya-uchitel-fiziki-konstantin-barkovecz/">Правмир, 2024</a></cite></div>
+  <div class="q"><b>Репетитор И. В. Яковлев:</b> «От самостоятельной подготовки к ЕГЭ по физике
+  предостерегаю сразу и категорически». Оптимальный срок — два года, с начала 10 класса.
+  Отдельно: «плохая математическая подготовка мешает школьникам решать физические задачи».
+  <cite><a href="https://mathus.ru/art/egephys2.php">mathus.ru</a></cite></div>
+  <div class="q"><b>Официальная статистика по региону (Башкортостан, 2025):</b> среди тех,
+  кто выбрал физику — а это уже мотивированные ребята — <b>36,4% не дотянули до 60 баллов</b>,
+  средний балл упал с 68,8 до 65,4.
+  <cite><a href="https://irorb.ru/wp-content/uploads/2026/04/metodicheskie-rekomendaczii-po-podgotovke-k-gia-po-fizike-v-2025-%E2%80%93-2026-uchebnom-godu-na-osnove-analiza-ege-2026.pdf">Методический анализ ЕГЭ по физике, 2025</a></cite></div>
+  <div class="q">Истории с хорошим концом тоже есть, но у всех одна особенность: либо была
+  скрытая база (74 балла за три месяца), либо репетитор или курс (86 баллов через онлайн-школу).
+  Чисто самостоятельной истории «с нуля за год на 60+» не нашлось ни одной.
+  <cite><a href="https://otvet.mail.ru/question/231140003">Ответы Mail.ru</a>,
+  <a href="https://www.woman.ru/kids/nursery/thread/5914189/">Woman.ru</a></cite></div>
+
+  <h3 style="margin-top:22px;font-size:17px">Про биологию</h3>
+  <div class="q"><b>Маша, 2025:</b> готовилась два года с репетиторами, потратила больше
+  200 тысяч рублей. Химия 56, <b>биология 43</b>, русский 52. До цели не хватило девяти баллов,
+  ушла на платное.
+  <cite><a href="https://t-j.ru/vinyu-sebya-za-lyuboj-otdyh/">Т—Ж, 2025</a></cite></div>
+  <div class="q"><b>Выпускники о ЕГЭ-2025:</b> «Ощущение, что готовилась зря». Тяжелее всего —
+  генетическая задача и трофические уровни; «задания немного отличались от демоверсий».
+  <cite><a href="https://mel.fm/novosti/7461839-popalas-v-lovushku-v-odnom-zadanii-uzhas-vypuskniki-s-dalnego-vostoka--o-yege-po-biologii">Мел, 2025</a></cite></div>
+  <div class="q">Порог по биологии не берут 16–19% сдающих, средний балл 54,5 — один из самых
+  низких среди всех предметов. Основные баллы теряют во второй части: любая биологическая
+  ошибка обнуляет весь развёрнутый ответ.
+  <cite><a href="https://ege.lancmanschool.ru/poleznyie-stati/itogi-ege-po-biologii-2024-goda/">Итоги ЕГЭ по биологии</a>,
+  <a href="https://www.rbc.ru/society/07/07/2025/6869aaa49a7947837dab9d83">РБК, 2025</a></cite></div>
+
+  <h3 style="margin-top:22px;font-size:17px">Про географию</h3>
+  <div class="q"><b>Учитель географии Дмитрий Коменденко:</b> «География далеко не простой
+  экзамен» — там картография и вычисления. Школа даёт минимум, глубокие знания — нет.
+  <cite><a href="https://pedsovet.org/article/geografia-hit-sezona-kak-novye-pravila-priema-v-vuzy-izmenat-otnosenie-k-etomu-predmetu">Педсовет</a></cite></div>
+  <div class="q">Средний балл по географии — <b>54,8</b>, то есть не выше, чем у обществознания
+  и биологии. Миф «выучил учебник — и пятёрка» статистикой не подтверждается.
+  <cite><a href="https://4ege.ru/novosti-ege/75487-srednie-bally-ege-2025.html">Средние баллы ЕГЭ-2025</a></cite></div>
+  <div class="q"><b>Зато конкурс ниже.</b> Географию сдают всего около 21 тысячи человек в год —
+  это 2,7% выпускников, самый непопулярный предмет. Обратная сторона та же: и программ,
+  где она принимается, мало.
+  <cite><a href="https://media.foxford.ru/articles/ege-geography">Фоксфорд</a></cite></div>
+
+  <h3 style="margin-top:22px;font-size:17px">Про обществознание</h3>
+  <div class="q"><b>Юлия:</b> взяла обществознание и биологию как «понятные» предметы,
+  готовилась без репетиторов — <b>не набрала минимум по обоим</b>. Ушла в колледж на платное.
+  <cite><a href="https://pedsovet.org/article/est-li-zizn-posle-provalennogo-ege-istorii-vypusknikov-raznyh-let">Педсовет</a></cite></div>
+  <div class="q">Причина не в сложности мыслей, а в объёме: кодификатор — 75 тем из пяти разных
+  наук, единого учебника нет, вторая часть каждый год ужесточается.
+  <cite><a href="https://ege-obschestvo.ru/tpost/8pte04va71-statistika-ege-po-obschestvoznaniyu">Разбор статистики</a></cite></div>
+</div>
+
+<div class="big">
+  <h2>Что решает, кроме баллов</h2>
+  <p>Четыре вещи, которые на этих проходных значат не меньше, чем сам экзамен.</p>
+  <ul class="steps">
+    <li><b>Целевое обучение.</b> Отдельный конкурс, где людей обычно меньше, чем мест.
+    Предложения работодателей — на портале «Работа России», заявка подаётся вместе с основной
+    через Госуслуги. Цена: 3–5 лет отработки у заказчика, а при отказе — вернуть всю стоимость
+    обучения. С 2026 одна заявка — один вуз.</li>
+    <li><b>Индивидуальные достижения.</b> Волонтёрство, ГТО, аттестат с отличием — до 10 баллов.
+    На проходных 124–140 это решает исход. В одной из историй парень прямо написал:
+    «если бы не пять баллов за волонтёрство, я бы не поступил».</li>
+    <li><b>Правильная подача.</b> Пять вузов и пять специальностей — надо занять все.
+    Первым приоритетом ставить желаемое, последними — заведомо проходные направления,
+    где недобор. Заочная форма и филиалы почти всегда идут ниже очной. Не подать согласие —
+    значит не попасть в приказ, даже если проходишь по баллам.</li>
+    <li><b>Допнабор в августе.</b> Если основной этап не вышел, с 12 по 21 августа вузы
+    добирают на оставшиеся места: в 2026 это была сотня вузов и больше двух тысяч мест.
+    Чаще всего недобор — как раз на инженерных и аграрных направлениях.</li>
+  </ul>
+</div>
+
+<div class="big">
+  <h2>Как выбрать за неделю, а не за полгода</h2>
+  <ul class="steps">
+    <li><b>Открой «Знакомство с ЕГЭ»</b> и пролистай четыре предмета подряд: физику,
+    информатику, биологию, географию. Там настоящие страницы экзамена 2027 года.</li>
+    <li><b>Засеки, где не хочется закрыть вкладку.</b> Не «что кажется проще» — проще не будет
+    нигде. Важно, где хочется понять, как это устроено.</li>
+    <li><b>Возьми по одному заданию из каждого</b> и попробуй разобраться по разбору под
+    страницей. Полчаса на предмет. Это даёт больше, чем месяц размышлений.</li>
+    <li><b>Реши до ноября.</b> После Нового года смена предмета означает, что три месяца
+    работы ушли впустую — а их всего восемь.</li>
+    <li><b>Скажи вслух, что выбрал, и запиши дату.</b> Дальше — только работа: 3 часа в неделю
+    на предмет, без пропусков. Это и есть вся стратегия.</li>
+  </ul>
+</div>
+
+<div class="big" style="background:var(--sand);border:none">
+  <h2>Если коротко</h2>
+  <p><b>Самый широкий путь</b> — профильная математика плюс физика или информатика: 41 и 39
+  программ, больше тысячи мест, проходные от 124. Но физика стоит на математике, и если
+  математика идёт тяжело, восемь месяцев уйдут на добор алгебры, а не на физику.</p>
+  <p><b>Самый спокойный путь</b> — биология с географией: ни одного задания уровня «тяжело»,
+  дешевле всех до порога. Но это 11 программ и 181 место, почти всё — аграрное
+  и рыбохозяйственное. Не «плохо», а узко: надо заранее быть согласным на такую специальность.</p>
+  <p><b>Чего точно не стоит делать</b> — брать обществознание в расчёте на лёгкость. Три
+  программы, 48 мест и худшая статистика сдачи по стране.</p>
+  <p>И последнее. Любой из этих путей работает только при одном условии — что занимаешься
+  регулярно с осени. Восемь месяцев по три часа в неделю — это 100 часов на предмет,
+  ровно столько, сколько нужно на 50 баллов по большинству из них. Опоздание на два месяца
+  этот запас съедает целиком.</p>
+</div>
+
+<footer class="foot">Проходные баллы, конкурс и число зачисленных — из приказов о зачислении
+2026 года (Поступашкин). Часы и сложность заданий — из разбора демоверсий ФИПИ 2027 по единой
+методике, той же, что на странице «Предметы ЕГЭ». Цитаты и статистика — по ссылкам под ними.
+Числа по 2027 году изменятся: контрольные цифры приёма распределяют осенью 2026,
+но набор направлений и порядок величин обычно сохраняются.</footer>
+</div>
+</body>
+</html>

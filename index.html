@@ -493,7 +493,8 @@ function render() {
     `<button id="mQ" class="${screen === "quiz" ? "on" : ""}">Тест</button>` +
     `<a class="tb-l" href="vzvesit.html">Предметы ЕГЭ</a>` +
     `<button id="mA" class="${screen === "att" ? "on" : ""}">Аттестат</button>` +
-    `<a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>`;
+    `<a class="tb-l" href="znakomstvo.html">Знакомство с ЕГЭ</a>` +
+    `<a class="tb-l" href="varianty.html">Варианты</a>`;
   mode.querySelector("#mQ").onclick = () => { screen = "quiz"; manual = null; render(); };
   mode.querySelector("#mA").onclick = () => { screen = "att"; render(); };
   bar.hidden = screen !== "quiz";
