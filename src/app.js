@@ -173,13 +173,16 @@ function render() {
           <div class="hd"><h3>${i.n}</h3><span class="hrs">${st.h70} ч с нуля до 70</span></div>
           <div class="lvrow">
             <div class="lvl"><b>до 60</b><span>${st.n} заданий · ${st.h} ч</span></div>
-            <p>${d.a}</p>
+            <div><p>${d.a}</p>
+              ${d.a2 ? `<p class="ch2"><i>вторая часть, развёрнутый ответ:</i> ${d.a2}</p>` : ""}</div>
           </div>
           <div class="lvrow add">
             <div class="lvl"><b>до 70</b><span>${st.n70 - st.n
               ? "+" + (st.n70 - st.n) + " заданий · +" + (st.h70 - st.h) + " ч"
               : "то же самое"}</span></div>
-            <p>${d.b || "новых заданий нет — тот же набор, но без ошибок"}</p>
+            <div>${d.b ? `<p>${d.b}</p>` : ""}
+              ${d.b2 ? `<p class="ch2"><i>вторая часть, развёрнутый ответ:</i> ${d.b2}</p>` : ""}
+              ${!d.b && !d.b2 ? `<p>новых заданий нет — тот же набор, но без ошибок</p>` : ""}</div>
           </div>
           <div class="meta">На 70 суммарно ${st.p70} первичных из ${st.pmax} ·
             <b style="color:var(--ink)">${st.h70} ч</b> с нуля ·
