@@ -1,7 +1,7 @@
 """Вшивает src/*.js прямо в страницы: блокировщики рекламы режут внешние .js."""
 import re, os
 PAGES={'znakomstvo.html':['zadaniya.js'],
-       'vzvesit.html':['subjdata.js','grpdesc.js','tasks.js','app.js']}
+       'vzvesit.html':['subjdata.js','grpdesc.js','tasks.js','na60.js','app.js']}
 PROGS_PAGES=['index.html','vzvesit.html']
 PROGS=open(os.path.join('src','progs.js')).read().strip()
 

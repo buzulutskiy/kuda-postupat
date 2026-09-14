@@ -155,16 +155,26 @@ function render() {
     </section>
 
     <section>
-      <h2>Подводные камни</h2>
+      <h2>Что именно учить на 60–70 баллов</h2>
+      <p class="lede" style="font-size:15.5px">Честно, по каждому предмету: сколько первичных баллов
+      нужно, сколько это заданий, какие темы за ними стоят и сколько часов уйдёт, если начинать
+      с нуля. Для сравнения: при трёх часах в неделю с сентября по май выходит около 110 часов
+      на предмет.</p>
       ${["русский", ...nab].map(k => {
+        const d = NA60[k === "иностранный" ? "английский" : k];
+        const st = NA60S[k === "иностранный" ? "английский" : k];
         const i = SUBJ_INFO[k];
+        if (!d || !st) return "";
+        const vcls = d.v === "реально" ? "t0" : (d.v === "нереально" ? "t2" : (d.v === "тяжело" ? "t2" : "t1"));
         return `<div class="sub-card">
-          <div class="hd"><h3>${i.n}</h3><span class="tag ${i.K <= 2.5 ? "t0" : (i.K <= 6 ? "t1" : "t2")}">
-            сложность ${fk(i.K)}</span></div>
-          <p class="plus">${i.good}</p>
-          <ul>${i.bad.map(b => `<li>${b}</li>`).join("")}</ul>
-          <div class="meta">Курс ${i.h} ч · порог ${i.pp} первичных из ${i.pmax} = ${i.pt} баллов ·
-            до 50 баллов ≈ ${i.h50} ч работы</div>
+          <div class="hd"><h3>${i.n}</h3><span class="tag ${vcls}">${d.v}</span></div>
+          <p class="plus">${d.t}</p>
+          <div class="n60"><b>Что придётся выучить</b>
+            <ul>${d.u.map(x => `<li>${x}</li>`).join("")}</ul></div>
+          <p class="n60m">${d.m}</p>
+          <div class="meta">${st.n} заданий · ${st.p} первичных из ${i.pmax} ·
+            <b style="color:var(--ink)">${st.h} ч</b> подготовки с нуля ·
+            это ${fq(st.h / WEEKS)} ч в неделю до конца мая</div>
         </div>`;
       }).join("")}
     </section>
