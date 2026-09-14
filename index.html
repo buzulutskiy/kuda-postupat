@@ -163,6 +163,7 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
   max-width:56ch;opacity:.85}
 .sr{text-align:right;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .sr .sm{font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.sr .srok{color:var(--acc)}
 .kmark{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:4px;
   letter-spacing:.03em}
 .kmark.kg{background:var(--acc-soft);color:var(--ok)}
@@ -749,6 +750,24 @@ function renderManual(app) {
       ans = []; step = 0; showAll = false; tab = "ege"; manual = null; save(); render(); };
 }
 
+const SROK_M = {"~10 мес": 10, "1 г 10 м": 22, "2 г 10 м": 34, "3 г 6 м": 42, "3 г 10 м": 46};
+function srokInfo(p) {
+  let t = p.t, guess = false;
+  if (!t || t === "нет данных") {
+    const g = (p.code || "").split(".")[1];
+    if (g === "01") t = p.b === 11 ? "~10 мес" : "1 г 10 м";
+    else t = p.b === 11 ? "2 г 10 м" : "2 г 10 м — 3 г 10 м";
+    guess = true;
+  }
+  const end = y => 2027 + Math.floor((8 + y) / 12);
+  let till = "";
+  if (t.includes("—")) {
+    till = `отсрочка до лета ${end(SROK_M["2 г 10 м"])}–${end(SROK_M["3 г 10 м"])}`;
+  } else if (SROK_M[t]) {
+    till = `отсрочка до лета ${end(SROK_M[t])}`;
+  }
+  return {t: t + (guess ? " (обычно)" : ""), till};
+}
 function repBadge(k) {
   const r = KOLREP[k];
   if (!r) return "";
@@ -788,6 +807,7 @@ function attByTema(rows) {
           ${repBadge(p.k)}
           <span class="tag t${Math.min(2, p.g[0])}">${p.g[1]}</span>
           <span class="sm">${p.b} кл. · ${p.p == null ? "мест —" : p.p + " мест"} · аттестат ${fb(p.a)}</span>
+          <span class="sm srok">учиться ${srokInfo(p).t}${srokInfo(p).till ? " · " + srokInfo(p).till : ""}</span>
         </div>
       </div>`).join("")}
     </section>`;
@@ -847,6 +867,10 @@ function renderAtt(app) {
       чемпионата «Профессионалы»: это деньги, оборудование и договоры с работодателями.
       <b>Спорный</b> — в проект не входит, отзывы противоречивые. <b>Осторожно</b> — заметный
       негативный фон в отзывах или проблемы с аккредитацией отдельных программ.</p>
+      <p><b>Срок обучения и отсрочка.</b> Отсрочка действует ровно столько, сколько длится
+      обучение по нормативному сроку. Расчёт «до лета такого-то года» сделан от поступления
+      в сентябре 2027. Где срок помечен «обычно» — колледж его не публикует, и взят типовой
+      для этого уровня программы; перед подачей уточнить в приёмной комиссии.</p>
       <p>«Недобор» значит, что заявлений было меньше, чем мест: в 2026 году брали всех.
       Где балл аттестата не указан — колледж его не публикует, обычно это признак слабого конкурса.</p>
     </div>` : ""}
