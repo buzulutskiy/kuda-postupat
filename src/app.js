@@ -206,10 +206,16 @@ function render() {
       <p class="lede" style="font-size:15.5px">Что именно спрашивают, что надо сделать руками
       и сколько заданий нужно закрыть на 60 баллов. Отмеченные — минимальный набор.</p>
       <div class="legend">
+        <span><i class="row g"></i>нужно на 60 баллов</span>
+        <span><i class="row o"></i>добавляется до 70</span>
+        <span>без заливки — можно пропустить</span>
+      </div>
+      <div class="legend" style="margin-top:6px">
+        <span>Полоска слева от слова:</span>
         <span><i class="sq easy"></i>выбрать из вариантов</span>
         <span><i class="sq mid"></i>решить и вписать ответ</span>
         <span><i class="sq hard"></i>написать самому</span>
-        <span>Справа — насколько тяжело даётся само задание</span>
+        <span>её длина — насколько тяжело даётся задание</span>
       </div>
       ${tasksBlock(nab)}
     </section>

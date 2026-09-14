@@ -198,12 +198,21 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .tk .tb{width:16px;flex:none;text-align:right;font-family:Vollkorn,serif;font-weight:700;
   font-variant-numeric:tabular-nums;color:var(--faint)}
 .tk .tb2{font-size:12px;color:var(--faint);flex:none}
-.tk.on{background:var(--acc-soft);border-radius:3px}
+.tk.on{background:var(--acc-soft);border-radius:4px;border-left:3px solid var(--acc);
+  padding-left:5px}
 .tk.on .tn{color:var(--acc)}
-.tk.second{opacity:.5}
+.tk.on70{background:rgba(138,99,16,.13);border-radius:4px;border-left:3px solid var(--mid);
+  padding-left:5px}
+.tk.on70 .tn{color:var(--mid)}
+.tk.second{opacity:.55}
+.tk.second.on,.tk.second.on70{opacity:1}
 .tk.blk .tn{width:56px;white-space:nowrap;font-size:12.5px}
 .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--faint)}
 .legend .sq{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.legend .row{display:inline-block;width:14px;height:11px;border-radius:3px;margin-right:6px;
+  vertical-align:-1px}
+.legend .row.g{background:var(--acc-soft);box-shadow:inset 3px 0 0 var(--acc)}
+.legend .row.o{background:rgba(138,99,16,.13);box-shadow:inset 3px 0 0 var(--mid)}
 .legend .sq.easy{background:var(--line)}
 .legend .sq.mid{background:var(--acc)}
 .legend .sq.hard{background:#8a6310}
@@ -255,8 +264,6 @@ h2{margin-top:28px}
   letter-spacing:.04em;color:var(--mid)}
 @media (max-width:560px){.lvrow{grid-template-columns:1fr;gap:4px}
   .lvl{display:flex;gap:8px;align-items:baseline}.lvl span{margin-top:0}}
-.tk.on70{background:rgba(138,99,16,.09)}
-.tk.on70 .tn,.tk.on70 .tt{color:var(--ink);opacity:1}
 .mk70b{color:var(--mid);font-weight:700;font-size:13.5px}
 .partline{display:flex;align-items:baseline;gap:10px;margin:20px 0 8px;padding-top:14px;
   border-top:2px solid var(--line);flex-wrap:wrap}
@@ -896,10 +903,16 @@ function render() {
       <p class="lede" style="font-size:15.5px">Что именно спрашивают, что надо сделать руками
       и сколько заданий нужно закрыть на 60 баллов. Отмеченные — минимальный набор.</p>
       <div class="legend">
+        <span><i class="row g"></i>нужно на 60 баллов</span>
+        <span><i class="row o"></i>добавляется до 70</span>
+        <span>без заливки — можно пропустить</span>
+      </div>
+      <div class="legend" style="margin-top:6px">
+        <span>Полоска слева от слова:</span>
         <span><i class="sq easy"></i>выбрать из вариантов</span>
         <span><i class="sq mid"></i>решить и вписать ответ</span>
         <span><i class="sq hard"></i>написать самому</span>
-        <span>Справа — насколько тяжело даётся само задание</span>
+        <span>её длина — насколько тяжело даётся задание</span>
       </div>
       ${tasksBlock(nab)}
     </section>
