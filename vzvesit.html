@@ -155,6 +155,11 @@ td.nm span{color:var(--faint);font-size:12.5px;display:block}
 .pk:hover{border-color:var(--line)}
 .pk.on{background:var(--acc-soft);border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
 .pk.on span{color:var(--acc)}
+.qp{font-family:"PT Sans";font-size:14px;font-weight:700;color:var(--body);background:transparent;
+  border:1.5px solid var(--line);border-radius:20px;padding:7px 15px;transition:.12s}
+.qp:hover{border-color:var(--acc);color:var(--ink)}
+.qp.on{background:var(--acc);border-color:var(--acc);color:var(--paper)}
+.verdict{border-left:4px solid var(--acc)}
 .picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .sub-card{border-left:3px solid var(--line);padding:0 0 0 16px;margin:18px 0}
 .sub-card .hd{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
@@ -176,6 +181,9 @@ h2{margin-top:28px}
   <p class="lede">Отметьте предметы, которые думаете сдавать. Страница посчитает, сколько
   это стоит в часах, покажет подводные камни каждого предмета и все бюджетные программы,
   которые с таким набором открываются. Русский язык входит всегда — без него не берут никуда.</p>
+  <div class="kick" style="margin-top:20px">Быстрый выбор</div>
+  <div class="picker" id="presets"></div>
+  <div class="kick" style="margin-top:18px">Или соберите свой набор</div>
   <div class="picker" id="picker"></div>
   <p style="font-size:13px;color:var(--faint);margin-top:12px">
   Цифра рядом с предметом — сложность освоения с нуля по десятибалльной шкале:

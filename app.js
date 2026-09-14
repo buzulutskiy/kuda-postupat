@@ -1,6 +1,6 @@
-const WEEKS = 34;              // до конца мая
-const KEY = "vzvesit-v1";
-let sel = new Set(["физика", "математика"]);
+const WEEKS = 34;                     // до конца мая
+const KEY = "vzvesit-v2";
+let sel = new Set(["биология", "география"]);
 try { const s = JSON.parse(localStorage.getItem(KEY) || "null");
       if (Array.isArray(s) && s.length) sel = new Set(s); } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...sel])); } catch (e) {} };
@@ -8,9 +8,17 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify([...sel])); 
 const esc = s => String(s).replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]));
 const fq = v => v == null ? "—" : String(v).replace(".", ",");
 const fk = v => (Number.isInteger(v) ? v + ",0" : String(v).replace(".", ","));
-
 const passBall = p => p.s26 || p.s;
 const openPl = p => p.o == null ? p.p : p.o;
+
+const PRESETS = [
+  ["Биология + география", ["биология", "география"]],
+  ["Биология + химия", ["биология", "химия"]],
+  ["Математика + физика", ["математика", "физика"]],
+  ["Математика + информатика", ["математика", "информатика"]],
+  ["Математика + география", ["математика", "география"]],
+  ["Обществознание + история", ["обществознание", "история"]],
+];
 
 function fits(p, nab) {
   if (p.o === 0 || !passBall(p)) return false;
@@ -20,36 +28,55 @@ function fits(p, nab) {
   return true;
 }
 
-// суммарная оценка набора
-function effort(nab) {
-  const hours = nab.reduce((s, k) => s + SUBJ_INFO[k].h, 0) + SUBJ_INFO["русский"].h;
-  const K = nab.reduce((s, k) => s + SUBJ_INFO[k].K, 0) + SUBJ_INFO["русский"].K;
-  // до целевого уровня уходит ~60% курса
-  const need = Math.round(hours * 0.6);
-  const perWeek = +(need / WEEKS).toFixed(1);
-  let verdict, cls;
-  if (perWeek <= 7) { verdict = "спокойно"; cls = "t0"; }
-  else if (perWeek <= 10) { verdict = "плотно, но реально"; cls = "t0"; }
-  else if (perWeek <= 14) { verdict = "тяжело"; cls = "t1"; }
-  else { verdict = "на грани невозможного"; cls = "t2"; }
-  return {hours, need, perWeek, K: +K.toFixed(1), verdict, cls};
+// три уровня цели: порог, по 50 за предмет, по 60
+const LEVELS = [
+  {key: "hp",  name: "Взять пороги",        per: 42, sum: 126, note: "минимум, чтобы результат засчитали"},
+  {key: "h50", name: "По 50 за предмет",    per: 50, sum: 150, note: "нижняя граница реального"},
+  {key: "h60", name: "По 60 за предмет",    per: 60, sum: 180, note: "уровень выше среднего по стране"},
+];
+
+function plan(nab) {
+  return LEVELS.map(L => {
+    const hours = ["русский", ...nab].reduce((s, k) => s + SUBJ_INFO[k][L.key], 0);
+    const ok = PROGS.filter(p => fits(p, nab) && passBall(p) <= L.sum);
+    return {...L, hours, week: +(hours / WEEKS).toFixed(1),
+            n: ok.length, m: ok.reduce((a, p) => a + openPl(p), 0)};
+  });
 }
 
-function scenarios(ok) {
-  // сумма трёх: порог / минимум / средние / хороший
-  return [["Взяли только пороги", 125], ["Слабо: по 45 за предмет", 135],
-          ["Минимум: по 50", 150], ["Средние баллы: по 57", 172], ["Хорошо: по 63", 190]]
-    .map(([name, s]) => {
-      const g = ok.filter(p => passBall(p) <= s);
-      return {name, s, n: g.length, m: g.reduce((a, p) => a + openPl(p), 0)};
-    });
+// вердикт: на каком уровне бюджет становится реальным и чего это стоит
+function verdict(rows) {
+  const good = rows.find(r => r.n >= 3 && r.m >= 60);
+  if (!good) {
+    const any = rows.find(r => r.n > 0);
+    return any
+      ? {cls: "t2", head: "Шанс есть, но узкий",
+         text: `Даже на уровне «${any.name.toLowerCase()}» подходит всего ${any.n} программ. ` +
+               `Такой набор стоит брать, только если эти направления действительно нужны.`}
+      : {cls: "t2", head: "Бюджета с этим набором нет",
+         text: "Ни одна бюджетная программа трёх городов не принимает такое сочетание предметов."};
+  }
+  const cls = good.week <= 6 ? "t0" : (good.week <= 11 ? "t0" : "t1");
+  const how = good.week <= 6 ? "по часу в будний день"
+            : (good.week <= 9 ? "полтора часа в будни и три в выходной"
+            : (good.week <= 12 ? "два часа в будни и четыре в выходной"
+            : "три часа каждый день без выходных"));
+  return {cls, head: `На бюджет реально при цели «${good.name.toLowerCase()}»`,
+          text: `Это ${good.n} программ и ${good.m} мест. Цена — ${fq(good.week)} часа в неделю ` +
+                `до конца мая: ${how}. Всего ${good.hours} часов подготовки с нуля.`};
 }
 
 function render() {
   const nab = [...sel];
   const ok = PROGS.filter(p => fits(p, nab)).sort((a, b) => passBall(a) - passBall(b));
-  const e = effort(nab);
-  const sc = scenarios(ok);
+  const rows = plan(nab);
+  const v = nab.length ? verdict(rows) : null;
+  const K = +(nab.reduce((s, k) => s + SUBJ_INFO[k].K, 0) + SUBJ_INFO["русский"].K).toFixed(1);
+
+  document.getElementById("presets").innerHTML = PRESETS.map(([name, list]) => {
+    const on = list.length === sel.size && list.every(x => sel.has(x));
+    return `<button class="qp${on ? " on" : ""}" data-p="${list.join(",")}">${name}</button>`;
+  }).join("");
 
   document.getElementById("picker").innerHTML = Object.keys(SUBJ_INFO)
     .filter(k => k !== "русский")
@@ -60,30 +87,26 @@ function render() {
   document.getElementById("out").innerHTML = !nab.length
     ? `<p style="color:var(--faint);margin-top:20px">Выберите хотя бы один предмет сверх русского.</p>`
     : `
-    <section class="set">
-      <div class="stats">
-        <div><b class="num">${fk(e.K)}</b><span>суммарная<br>сложность</span></div>
-        <div><b class="num">${e.need}</b><span>часов до цели<br>из ${e.hours} курса</span></div>
-        <div><b class="num">${fq(e.perWeek)}</b><span>часов в неделю<br>до конца мая</span></div>
-        <div><b class="num">${ok.length}</b><span>программ<br>подходит</span></div>
-      </div>
-      <p style="margin-top:16px"><span class="tag ${e.cls}">${e.verdict}</span>
-      <span style="margin-left:10px;font-size:14px;color:var(--faint)">
-      при восьми месяцах и нулевых знаниях</span></p>
-      <p style="font-size:13.5px;color:var(--faint);margin-top:10px">
-      Считается так: до нужного уровня уходит около 60 процентов школьного курса,
-      это ${e.need} часов, и они делятся на 34 недели до конца мая. Целиться ниже — значит
-      и часов меньше, но и список программ короче.</p>
+    <section class="set verdict">
+      <span class="tag ${v.cls}">${v.head}</span>
+      <p style="margin-top:12px;font-size:16px">${v.text}</p>
     </section>
 
-    <section class="set">
-      <div class="kick">Что получится при разном результате</div>
-      <div class="scroll"><table style="margin-top:12px">
-        <colgroup><col><col class="w1"><col class="w1"><col class="w1"></colgroup>
-        <tr><th>Исход</th><th class="r">Сумма</th><th class="r">Программ</th><th class="r">Мест</th></tr>
-        ${sc.map(s => `<tr><td class="nm"><b>${s.name}</b></td><td class="r">${s.s}</td>
-          <td class="r">${s.n}</td><td class="r">${s.m}</td></tr>`).join("")}
+    <section>
+      <h2>Три уровня цели</h2>
+      <p class="lede" style="font-size:15.5px">Чем выше целитесь, тем больше часов и тем шире выбор.
+      Часы — подготовка с нуля к концу мая, вместе с русским.</p>
+      <div class="scroll"><table>
+        <colgroup><col><col class="w1"><col class="w2"><col class="w1"><col class="w1"></colgroup>
+        <tr><th>Цель</th><th class="r">Сумма<br>трёх ЕГЭ</th><th class="r">Часов<br>в неделю</th>
+        <th class="r">Программ</th><th class="r">Мест</th></tr>
+        ${rows.map(r => `<tr><td class="nm"><b>${r.name}</b><span>${r.note}</span></td>
+          <td class="r">${r.sum}</td>
+          <td class="r"><b style="color:var(--ink)">${fq(r.week)}</b><span class="cell-sub">${r.hours} ч всего</span></td>
+          <td class="r">${r.n}</td><td class="r">${r.m}</td></tr>`).join("")}
       </table></div>
+      <p style="font-size:13.5px;color:var(--faint);margin-top:12px">
+      Суммарная сложность набора — ${fk(K)} по десятибалльной шкале, включая русский.</p>
     </section>
 
     <section>
@@ -95,7 +118,8 @@ function render() {
             сложность ${fk(i.K)}</span></div>
           <p class="plus">${i.good}</p>
           <ul>${i.bad.map(b => `<li>${b}</li>`).join("")}</ul>
-          <div class="meta">Курс ${i.h} ч · порог ${i.pp} первичных из ${i.pmax} = ${i.pt} баллов</div>
+          <div class="meta">Курс ${i.h} ч · порог ${i.pp} первичных из ${i.pmax} = ${i.pt} баллов ·
+            до 50 баллов ≈ ${i.h50} ч работы</div>
         </div>`;
       }).join("")}
     </section>
@@ -103,15 +127,15 @@ function render() {
     <section>
       <h2>Куда можно поступить — все ${ok.length}</h2>
       <p class="lede" style="font-size:15.5px">Проходной — итог приёма 2026 года, конкурс — заявлений
-      на бюджетное место. Зелёным отмечено то, что берётся средними баллами.</p>
+      на бюджетное место.</p>
       ${ok.length ? `<div class="scroll"><table>
         <colgroup><col><col class="w2"><col class="w1"><col class="w1"><col class="w2"></colgroup>
         <tr><th>Направление</th><th class="r">Проходной</th><th class="r">Конкурс</th>
-        <th class="r">Мест</th><th class="r">Оценка</th></tr>
+        <th class="r">Мест</th><th class="r">Чем берётся</th></tr>
         ${ok.map(p => {
           const b = passBall(p);
-          const cls = b <= 172 ? "t0" : (b <= 190 ? "t1" : "t2");
-          const lab = b <= 172 ? "средними" : (b <= 190 ? "выше среднего" : "трудно");
+          const cls = b <= 150 ? "t0" : (b <= 180 ? "t0" : (b <= 200 ? "t1" : "t2"));
+          const lab = b <= 150 ? "по 50" : (b <= 180 ? "по 60" : (b <= 200 ? "по 67" : "по 70+"));
           return `<tr><td class="nm"><b>${esc(p.n)}</b><span>${esc(p.v)} · ${esc(p.c)} — ${
             GRP[p.code.slice(0,2)] || ""}</span></td>
             <td class="r">${b}</td><td class="r">${fq(p.k26)}</td>
@@ -124,6 +148,10 @@ function render() {
   document.querySelectorAll(".pk").forEach(b => b.onclick = () => {
     const k = b.dataset.k;
     sel.has(k) ? sel.delete(k) : sel.add(k);
+    save(); render();
+  });
+  document.querySelectorAll(".qp").forEach(b => b.onclick = () => {
+    sel = new Set(b.dataset.p.split(","));
     save(); render();
   });
 }
